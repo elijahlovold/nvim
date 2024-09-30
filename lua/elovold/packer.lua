@@ -21,13 +21,12 @@ return require('packer').startup(function(use)
 	end
   })
 
-  use ({
-	'Mofiqul/vscode.nvim',
-	as = 'vscode', 
-	config = function()
-		vim.cmd('colorscheme vscode')
-	end
-  })
+  use ({'Mofiqul/vscode.nvim', as = 'vscode'})
+  use ({'folke/tokyonight.nvim', as = 'tokyonight'})
+  use ({'EdenEast/nightfox.nvim', as = 'nightfox'})
+  use ({'bluz71/vim-nightfly-colors', as = 'nightfly'})
+
+    
 
   use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
   use('nvim-treesitter/playground')
