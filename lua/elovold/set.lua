@@ -50,3 +50,10 @@ function toggle_colorcolumn()
         vim.wo.colorcolumn = ""    -- Clear if it's set
     end
 end
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "netrw",
+    callback = function()
+        vim.wo.relativenumber = true
+    end,
+})

@@ -65,6 +65,8 @@ return require('packer').startup(function(use)
       end
   }
 
+  use {'tpope/vim-surround'}
+
 
   end)
 
