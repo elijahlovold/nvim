@@ -67,10 +67,6 @@ cmp.setup({
     }, {
         { name = 'buffer' },
     }),
-    preselect = 'item',
-    completion = {
-        completeopt = 'menu,menuone,noinsert'
-    },
 })
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
