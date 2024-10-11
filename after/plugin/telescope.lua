@@ -34,4 +34,3 @@ vim.keymap.set('n', '<leader>pa', function()
     end
   })
 end)
-

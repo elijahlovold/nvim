@@ -58,15 +58,8 @@ return require('packer').startup(function(use)
 	  }
   }
 
-  use {
-      'numToStr/Comment.nvim',
-      config = function()
-          require('Comment').setup()
-      end
-  }
-
+  use {'numToStr/Comment.nvim'}
   use {'tpope/vim-surround'}
-
 
   end)
 

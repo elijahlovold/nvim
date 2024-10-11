@@ -61,3 +61,5 @@ end
 -- Mapping <leader>i to the function
 vim.api.nvim_set_keymap('n', '<leader>>', ':lua add_spaces_to_column_n()<CR>', { noremap = true, silent = true })
 
+vim.keymap.set({'n', 'i', 'v'}, '<A-j>', '<Down>', { noremap = true })
+vim.keymap.set({'n', 'i', 'v'}, '<A-k>', '<Up>', { noremap = true })
