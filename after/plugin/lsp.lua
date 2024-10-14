@@ -1,6 +1,7 @@
 ---
 -- LSP configuration
 ---
+require('mason').setup()
 
 local lsp_zero = require('lsp-zero')
 
