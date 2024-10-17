@@ -40,7 +40,9 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', '<leader>/h', ':Ex ~/<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>/r', ':Ex ~/repos<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>/c', ':Ex ~/.config<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/n', ':Ex ~/.config/nvim<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>/n', ':Ex ~/.config/nvim/lua/elovold<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>/N', ':Ex ~/.config/nvim/after/plugin<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>/i', ':e ~/.config/i3/config<CR>', { noremap = true, silent = true })
 
 -- Function to add N spaces at column 60
 function add_spaces_to_column_n()
