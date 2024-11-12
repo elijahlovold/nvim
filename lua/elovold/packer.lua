@@ -62,6 +62,11 @@ return require('packer').startup(function(use)
   use {'tpope/vim-surround'}
 
   use {
+      'nvim-lualine/lualine.nvim',
+      -- requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+  }
+
+  use {
       'goolord/alpha-nvim',
       requires = { 'echasnovski/mini.icons' },
       -- config = function ()
