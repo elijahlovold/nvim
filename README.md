@@ -33,3 +33,11 @@ sudo apt install npm
 ```
 
 # :Mason -> download lsps
+
+# install Fira Code Nerd Font from: 
+```
+$ wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/FiraCode.zip
+$ unzip FiraCode.zip -d firaCode
+$ sudo cp firaCode /usr/share/fonts/
+$ fc-cache -f -v
+```

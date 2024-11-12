@@ -61,5 +61,12 @@ return require('packer').startup(function(use)
   use {'numToStr/Comment.nvim'}
   use {'tpope/vim-surround'}
 
+  use {
+      'goolord/alpha-nvim',
+      requires = { 'echasnovski/mini.icons' },
+      -- config = function ()
+      --     require'alpha'.setup(require'alpha.themes.startify'.config)
+      -- end
+  }
   end)
 
