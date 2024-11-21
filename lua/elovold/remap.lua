@@ -1,6 +1,13 @@
 vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
+-- Map Alt + hjkl to navigate windows
+vim.api.nvim_set_keymap('n', '<A-h>', '<C-w>h', { noremap = true, silent = true })  -- Move left
+vim.api.nvim_set_keymap('n', '<A-j>', '<C-w>j', { noremap = true, silent = true })  -- Move down
+vim.api.nvim_set_keymap('n', '<A-k>', '<C-w>k', { noremap = true, silent = true })  -- Move up
+vim.api.nvim_set_keymap('n', '<A-l>', '<C-w>l', { noremap = true, silent = true })  -- Move right
+
+
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
@@ -24,7 +31,6 @@ vim.keymap.set("n", "<leader>Y", [["+Y]])
 vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
 
 vim.keymap.set("n", "Q", "<nop>")
---vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
@@ -35,6 +41,8 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
+-- toggle controls
+vim.api.nvim_set_keymap('n', '<leader>tc', ':lua toggle_colorcolumn()<CR>', { noremap = true, silent = true })
 
 -- some quick common dirs
 vim.api.nvim_set_keymap('n', '<leader>/h', ':Ex ~/<CR>', { noremap = true, silent = true })
@@ -60,8 +68,8 @@ function add_spaces_to_column_n()
     end
 end
 
--- Mapping <leader>i to the function
+-- Mapping <leader>> to the function
 vim.api.nvim_set_keymap('n', '<leader>>', ':lua add_spaces_to_column_n()<CR>', { noremap = true, silent = true })
 
-vim.keymap.set({'n', 'i', 'v'}, '<A-j>', '<Down>', { noremap = true })
-vim.keymap.set({'n', 'i', 'v'}, '<A-k>', '<Up>', { noremap = true })
+-- vim.keymap.set({'n', 'i', 'v'}, '<A-j>', '<Down>', { noremap = true })
+-- vim.keymap.set({'n', 'i', 'v'}, '<A-k>', '<Up>', { noremap = true })

@@ -73,5 +73,12 @@ return require('packer').startup(function(use)
       --     require'alpha'.setup(require'alpha.themes.startify'.config)
       -- end
   }
+
+  -- use {
+  --     'nvim-tree/nvim-tree.lua',
+  --     requires = {
+  --         'nvim-tree/nvim-web-devicons', -- optional
+  --     },
+  -- }
   end)
 

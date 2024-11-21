@@ -40,9 +40,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     callback = highlight_yank,
 })
 
-
-vim.api.nvim_set_keymap('n', '<leader>tc', ':lua toggle_colorcolumn()<CR>', { noremap = true, silent = true })
-
 function toggle_colorcolumn()
     if vim.wo.colorcolumn == "" then
         vim.wo.colorcolumn = "80"  -- Set to 80 if not set
@@ -57,3 +54,32 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.wo.relativenumber = true
     end,
 })
+
+vim.g.netrw_icons = 1       -- Enable icons for files/folders
+
+-- -- Ensure nvim-web-devicons is loaded before Netrw
+-- require'nvim-web-devicons'.setup()
+
+-- -- Function to show icons in Netrw
+-- vim.cmd [[
+--   augroup NetrwIcons
+--     autocmd!
+--     autocmd FileType netrw setlocal listchars+=icon
+--   augroup END
+-- ]]
+
+
+-- -- Netrw settings
+-- vim.g.netrw_liststyle = 0        -- Use tree view (directories nested with indentation)
+
+-- vim.api.nvim_set_keymap('n', '<leader>tn', ':lua ToggleNetrwMode()<CR>', { noremap = true, silent = true })
+
+-- function ToggleNetrwMode()
+--   if vim.g.netrw_liststyle == 3 then
+--       print("helllo")
+--       vim.g.netrw_liststyle = 0
+--   else
+--       print("goodbye")
+--       vim.g.netrw_liststyle = 3
+--   end
+-- end
