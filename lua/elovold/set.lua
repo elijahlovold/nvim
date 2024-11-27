@@ -55,6 +55,15 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
+vim.api.nvim_create_augroup("CloseQuickfixAfterSelection", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+  group = "CloseQuickfixAfterSelection",
+  pattern = "qf",
+  callback = function()
+    vim.api.nvim_buf_set_keymap(0, "n", "<CR>", "<CR>:cclose<CR>", { noremap = true, silent = true })
+  end,
+})
+
 vim.g.netrw_icons = 1       -- Enable icons for files/folders
 
 -- -- Ensure nvim-web-devicons is loaded before Netrw
