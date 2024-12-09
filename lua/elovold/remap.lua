@@ -74,3 +74,28 @@ vim.api.nvim_set_keymap('n', '<leader>>', ':lua add_spaces_to_column_n()<CR>', {
 
 -- vim.keymap.set({'n', 'i', 'v'}, '<A-j>', '<Down>', { noremap = true })
 -- vim.keymap.set({'n', 'i', 'v'}, '<A-k>', '<Up>', { noremap = true })
+
+-- Create a function to toggle wrap and remap j/k
+function toggle_wrap_and_remap()
+  -- Check if line wrap is currently enabled
+  local wrap_enabled = vim.wo.wrap
+  
+  if wrap_enabled then
+    -- If wrap is enabled, disable it and restore default behavior for j/k
+    vim.wo.wrap = false
+    vim.api.nvim_del_keymap('n', 'j')  -- Remove gj remap
+    vim.api.nvim_del_keymap('n', 'k')  -- Remove gk remap
+    vim.api.nvim_del_keymap('v', 'j')  -- Remove gj remap
+    vim.api.nvim_del_keymap('v', 'k')  -- Remove gk remap
+  else
+    -- If wrap is disabled, enable wrap and remap j/k to gj/gk
+    vim.wo.wrap = true
+    vim.api.nvim_set_keymap('n', 'j', 'gj', { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('n', 'k', 'gk', { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('v', 'j', 'gj', { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('v', 'k', 'gk', { noremap = true, silent = true })
+  end
+end
+
+-- Map the toggle function to a key shortcut
+vim.api.nvim_set_keymap('n', '<leader>w', ':lua toggle_wrap_and_remap()<CR>', { noremap = true, silent = true })

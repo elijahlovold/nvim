@@ -15,6 +15,8 @@ function ColorMyPencils(color)
     vim.api.nvim_set_hl(0, "PreProc", { fg = "#996eff" }) 
     vim.api.nvim_set_hl(0, "@variable.builtin", { fg = "#26c3fc" }) 
     vim.api.nvim_set_hl(0, "@string.documentation", { link = "String" }) 
+
+    vim.api.nvim_set_hl(0, 'ColorColumn', { ctermbg = 0, bg = '#0f2d59' })
 end
 
 ColorMyPencils()
