@@ -84,16 +84,30 @@ function toggle_wrap_and_remap()
     -- If wrap is enabled, disable it and restore default behavior for j/k
     vim.wo.wrap = false
     vim.api.nvim_del_keymap('n', 'j')  -- Remove gj remap
-    vim.api.nvim_del_keymap('n', 'k')  -- Remove gk remap
     vim.api.nvim_del_keymap('v', 'j')  -- Remove gj remap
+
+    vim.api.nvim_del_keymap('n', 'k')  -- Remove gk remap
     vim.api.nvim_del_keymap('v', 'k')  -- Remove gk remap
+
+    vim.api.nvim_del_keymap('n', '0')
+    vim.api.nvim_del_keymap('v', '0')
+
+    vim.api.nvim_del_keymap('n', '$')
+    vim.api.nvim_del_keymap('v', '$')
   else
     -- If wrap is disabled, enable wrap and remap j/k to gj/gk
     vim.wo.wrap = true
     vim.api.nvim_set_keymap('n', 'j', 'gj', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap('n', 'k', 'gk', { noremap = true, silent = true })
     vim.api.nvim_set_keymap('v', 'j', 'gj', { noremap = true, silent = true })
+
+    vim.api.nvim_set_keymap('n', 'k', 'gk', { noremap = true, silent = true })
     vim.api.nvim_set_keymap('v', 'k', 'gk', { noremap = true, silent = true })
+
+    vim.api.nvim_set_keymap('n', '0', 'g0', { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('v', '0', 'g0', { noremap = true, silent = true })
+
+    vim.api.nvim_set_keymap('n', '$', 'g$', { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('v', '$', 'g$', { noremap = true, silent = true })
   end
 end
 
