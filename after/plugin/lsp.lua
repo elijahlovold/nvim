@@ -82,3 +82,7 @@ require('lspconfig').clangd.setup{
 require('lspconfig').luau_lsp.setup{
     capabilities=capabilities
 }
+
+require('lspconfig').ltex.setup{
+    capabilities=capabilities
+}
