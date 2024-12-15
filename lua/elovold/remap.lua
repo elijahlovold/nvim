@@ -113,3 +113,20 @@ end
 
 -- Map the toggle function to a key shortcut
 vim.api.nvim_set_keymap('n', '<leader>w', ':lua toggle_wrap_and_remap()<CR>', { noremap = true, silent = true })
+
+-- vim.api.nvim_set_keymap('n', '<leader>pl', '<CR>:!pdflatex %<CR>', { noremap = true, silent = true })
+function CompileLaTeX()
+  -- Check if the current file is a .tex file
+  local filetype = vim.fn.expand('%:e')
+  if filetype == 'tex' then
+    -- Save the current file
+    vim.cmd('write')
+    -- Run pdflatex and suppress output
+    vim.cmd('silent !pdflatex % > /dev/null 2>&1')
+  else
+    print("Not a LaTeX file!")
+  end
+end
+
+-- Map the function to a keybinding (e.g., <leader>p)
+vim.api.nvim_set_keymap('n', '<leader>pl', ':lua CompileLaTeX()<CR>', { noremap = true, silent = true })
