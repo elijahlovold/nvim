@@ -86,3 +86,11 @@ require('lspconfig').luau_lsp.setup{
 require('lspconfig').ltex.setup{
     capabilities=capabilities
 }
+
+require('lspconfig').html.setup{
+    capabilities=capabilities
+}
+
+require('lspconfig').ts_ls.setup{
+    capabilities=capabilities
+}

@@ -3,7 +3,7 @@ vim.keymap.set('n', '<C-p>', builtin.git_files, {})
 
 vim.keymap.set('n', '<leader>pf', function()
     builtin.find_files({
-        no_ignore = true,
+        -- no_ignore = true,
         attach_mappings = function(prompt_bufnr, map)
             map('i', '<A-j>', require('telescope.actions').move_selection_next)
             map('i', '<A-k>', require('telescope.actions').move_selection_previous)
@@ -41,9 +41,9 @@ vim.keymap.set('n', '<leader>ps', function()
             '--line-number',
             '--column',
             '--smart-case',
-            '--no-ignore'       -- Disable .gitignore and other ignore files
+            -- '--no-ignore'       -- Disable .gitignore and other ignore files
         },       
-        no_ignore = true,
+        -- no_ignore = true,
         attach_mappings = function(prompt_bufnr, map)
             map('i', '<A-j>', require('telescope.actions').move_selection_next)
             map('i', '<A-k>', require('telescope.actions').move_selection_previous)
@@ -65,3 +65,28 @@ vim.keymap.set('n', '<leader>pa', function()
         end
     })
 end)
+
+vim.keymap.set('n', '<leader>pb', function()
+    builtin.buffers({
+        no_ignore = true,
+        attach_mappings = function(prompt_bufnr, map)
+            map('i', '<A-j>', require('telescope.actions').move_selection_next)
+            map('i', '<A-k>', require('telescope.actions').move_selection_previous)
+
+            return true
+        end
+    })
+end)
+
+vim.keymap.set('n', '<leader>ph', function()
+    builtin.help_tags({
+        no_ignore = true,
+        attach_mappings = function(prompt_bufnr, map)
+            map('i', '<A-j>', require('telescope.actions').move_selection_next)
+            map('i', '<A-k>', require('telescope.actions').move_selection_previous)
+
+            return true
+        end
+    })
+end)
+

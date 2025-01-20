@@ -1,5 +1,4 @@
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
 -- Map Alt + hjkl to navigate windows
 vim.api.nvim_set_keymap('n', '<A-h>', '<C-w>h', { noremap = true, silent = true })  -- Move left
@@ -7,6 +6,7 @@ vim.api.nvim_set_keymap('n', '<A-j>', '<C-w>j', { noremap = true, silent = true 
 vim.api.nvim_set_keymap('n', '<A-k>', '<C-w>k', { noremap = true, silent = true })  -- Move up
 vim.api.nvim_set_keymap('n', '<A-l>', '<C-w>l', { noremap = true, silent = true })  -- Move right
 
+vim.keymap.set("n", "<leader>pwd", "<cmd>echo expand('%:p')<CR>")
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
@@ -46,11 +46,11 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 vim.api.nvim_set_keymap('n', '<leader>tc', ':lua toggle_colorcolumn()<CR>', { noremap = true, silent = true })
 
 -- some quick common dirs
-vim.api.nvim_set_keymap('n', '<leader>/h', ':Ex ~/<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/r', ':Ex ~/repos<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/c', ':Ex ~/.config<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/n', ':Ex ~/.config/nvim/lua/elovold<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/N', ':Ex ~/.config/nvim/after/plugin<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>/h', ':Oil ~/<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>/r', ':Oil ~/repos<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>/c', ':Oil ~/.config<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>/n', ':Oil ~/.config/nvim/lua/elovold<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>/N', ':Oil ~/.config/nvim/after/plugin<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>/i', ':e ~/.config/i3/config<CR>', { noremap = true, silent = true })
 
 -- Function to add N spaces at column 60

@@ -27,3 +27,9 @@ require'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = false,
   },
 }
+
+require('treesitter-context').setup({
+  enable = true,        -- Enable this plugin
+  max_lines = 3,        -- How many lines the context window can show
+  trim_scope = 'outer', -- Show the outermost scope (class > function)
+})
