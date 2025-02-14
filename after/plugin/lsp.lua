@@ -70,6 +70,17 @@ cmp.setup({
     }),
 })
 
+vim.api.nvim_set_keymap('n', '<leader>tl', [[<cmd>lua ToggleLsp()<CR>]], { noremap = true, silent = true })
+
+function ToggleLsp()
+    local clients = vim.lsp.get_active_clients()
+    if #clients > 0 then
+        vim.cmd('LspStop')
+    else
+        vim.cmd('LspStart')
+    end
+end
+
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 -- setup language servers
@@ -79,7 +90,28 @@ require('lspconfig').pyright.setup{
 require('lspconfig').clangd.setup{
     capabilities=capabilities
 }
-require('lspconfig').luau_lsp.setup{
+require('lspconfig').lua_ls.setup{
+    settings = {
+        Lua = {
+            -- Diagnostics settings
+            diagnostics = {
+                globals = {'vim'},  -- Add 'vim' as a global to avoid diagnostics warnings
+            },
+            -- Runtime settings
+            runtime = {
+                version = 'LuaJIT',  -- LuaJIT is the most common version for Neovim
+                path = vim.split(package.path, ';'),  -- Ensure Lua can find required modules
+            },
+            -- Workspace settings (including Neovim's runtime)
+            workspace = {
+                library = vim.api.nvim_get_runtime_file("", true),  -- Include Neovim's runtime files
+            },
+            -- Completion settings (optional)
+            completion = {
+                callSnippet = "Replace",  -- Defines how snippets are handled
+            },
+        },
+    },
     capabilities=capabilities
 }
 

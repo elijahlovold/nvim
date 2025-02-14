@@ -8,6 +8,7 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
+vim.opt.splitright = true
 vim.opt.smartindent = true
 
 vim.opt.wrap = false
@@ -65,6 +66,13 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.g.netrw_icons = 1       -- Enable icons for files/folders
+
+vim.api.nvim_create_augroup('filetypedetect', { clear = true })
+vim.api.nvim_create_autocmd("BufRead", {
+  pattern = '*.spec',
+  command = 'set filetype=python',
+  group = 'filetypedetect',
+})
 
 -- -- Ensure nvim-web-devicons is loaded before Netrw
 -- require'nvim-web-devicons'.setup()

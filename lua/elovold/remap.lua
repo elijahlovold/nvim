@@ -6,7 +6,16 @@ vim.api.nvim_set_keymap('n', '<A-j>', '<C-w>j', { noremap = true, silent = true 
 vim.api.nvim_set_keymap('n', '<A-k>', '<C-w>k', { noremap = true, silent = true })  -- Move up
 vim.api.nvim_set_keymap('n', '<A-l>', '<C-w>l', { noremap = true, silent = true })  -- Move right
 
+-- remaps when entering commands
+vim.cmd('cnoremap <A-j> <Down>')
+vim.cmd('cnoremap <A-k> <Up>')
+
 vim.keymap.set("n", "<leader>pwd", "<cmd>echo expand('%:p')<CR>")
+
+vim.keymap.set("n", "<leader>R", ":vsplit | terminal<CR>i", { noremap = true, silent = true })
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true })
+vim.keymap.set("t", "<A-j>", "<Down>", { noremap = true, silent = true })
+vim.keymap.set("t", "<A-k>", "<Up>", { noremap = true, silent = true })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
