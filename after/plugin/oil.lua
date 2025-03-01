@@ -4,7 +4,12 @@ require("oil").setup({
     show_hidden = true,  -- Show hidden files like netrw
     show_filesystem = true,  -- Show filesystem
   },
+
+  icons = true,
+
   default_file_explorer = true,
+  delete_to_trash = true,
+  skip_confirm_for_simple_edits = true,
   
   -- Configuration for the file preview window
   preview_win = {

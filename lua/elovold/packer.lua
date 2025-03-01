@@ -62,6 +62,7 @@ return require('packer').startup(function(use)
   use {'numToStr/Comment.nvim'}
   use {'tpope/vim-surround'}
 
+  use {'nvim-tree/nvim-web-devicons'}
   use {"stevearc/oil.nvim"}
 
   use {
@@ -92,8 +93,9 @@ return require('packer').startup(function(use)
   --         'nvim-tree/nvim-web-devicons', -- optional
   --     },
   -- }
+  use 'RRethy/nvim-align'
 
-  use 'eandrju/cellular-automaton.nvim' 
+  use 'eandrju/cellular-automaton.nvim'
 
   end)
 
