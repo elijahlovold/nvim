@@ -31,6 +31,15 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "80"
 
+-- init diagnostics config
+vim.diagnostic.config({
+    virtual_text = true,
+    signs = true,
+    underline = true,
+    update_in_insert = true,
+})
+
+ 
 -- Function to highlight the yanked text
 local function highlight_yank()
     vim.highlight.on_yank { timeout = 200 }  -- Highlight for 200ms

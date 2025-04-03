@@ -1,7 +1,7 @@
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<C-p>', builtin.git_files, {})
+vim.keymap.set('n', '<leader>pg', builtin.git_files, {})
 
-vim.keymap.set('n', '<leader>pf', function()
+local function find_files()
     builtin.find_files({
         -- no_ignore = true,
         attach_mappings = function(prompt_bufnr, map)
@@ -10,7 +10,10 @@ vim.keymap.set('n', '<leader>pf', function()
             return true
         end
     })
-end)
+end
+
+vim.keymap.set('n', '<C-k>', find_files)
+vim.keymap.set('n', '<leader>pf', find_files)
 
 -- vim.keymap.set('n', '<leader>ps', function()
 --   local telescope = require('telescope.builtin')
