@@ -109,3 +109,26 @@ vim.api.nvim_create_autocmd("BufRead", {
 --       vim.g.netrw_liststyle = 3
 --   end
 -- end
+
+-- disable zip pugin
+vim.g.loaded_zipPlugin = 1
+vim.g.loaded_zip = 1
+vim.g.loaded_gzip = 1
+
+vim.api.nvim_create_autocmd("BufReadCmd", {
+  pattern = "*.docx",
+  callback = function(args)
+    local filepath = vim.fn.expand(args.file)
+    local tmpfile = vim.fn.tempname() .. ".txt"
+    local cmd = string.format("docx2txt '%s' > '%s'", filepath, tmpfile)
+    os.execute(cmd)
+
+    -- Read contents into current buffer
+    vim.cmd("silent 0read " .. tmpfile)
+    vim.bo.buftype = "nofile"
+    vim.bo.bufhidden = "hide"
+    vim.bo.swapfile = false
+    vim.bo.modifiable = false
+    vim.bo.readonly = true
+  end,
+})

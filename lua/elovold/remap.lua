@@ -60,6 +60,7 @@ vim.api.nvim_set_keymap('n', '<leader>/c', ':Oil ~/.config<CR>', { noremap = tru
 vim.api.nvim_set_keymap('n', '<leader>/n', ':Oil ~/.config/nvim/lua/elovold<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>/N', ':Oil ~/.config/nvim/after/plugin<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>/i', ':e ~/.config/i3/config<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>/b', ':e ~/Documents/bible_kjv.txt<CR>', { noremap = true, silent = true })
 
 -- Function to add N spaces at column 60
 function add_spaces_to_column_n()
