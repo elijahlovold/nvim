@@ -142,9 +142,9 @@ require('lspconfig').lua_ls.setup{
     capabilities=capabilities
 }
 
-require('lspconfig').ltex.setup{
-    capabilities=capabilities
-}
+-- require('lspconfig').ltex.setup{
+--     capabilities=capabilities
+-- }
 
 require('lspconfig').html.setup{
     capabilities=capabilities

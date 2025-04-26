@@ -31,6 +31,8 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "80"
 
+vim.opt.suffixesadd:append({".md"})
+
 -- init diagnostics config
 vim.diagnostic.config({
     virtual_text = true,
@@ -109,6 +111,16 @@ vim.api.nvim_create_autocmd("BufRead", {
 --       vim.g.netrw_liststyle = 3
 --   end
 -- end
+
+vim.keymap.set("n", "<leader>b", function()
+  vim.ui.input({ prompt = "Bible passage: " }, function(input)
+    if input == nil or input == "" then return end
+
+    local output = vim.fn.system("bible " .. input)
+    local lines = vim.split(output, "\n", { plain = true })
+    vim.api.nvim_put(lines, "l", true, true)  -- put below cursor, move cursor
+  end)
+end, { desc = "Fetch Bible verse and copy to register" })
 
 -- disable zip pugin
 vim.g.loaded_zipPlugin = 1
