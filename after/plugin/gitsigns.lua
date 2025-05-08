@@ -69,15 +69,31 @@ local function get_git_root()
   return root or ""
 end
 
+local function is_submodule(path)
+    local stat = vim.loop.fs_stat(path)
+    return stat and stat.type == "directory"
+end
+
 -- Get list of changed files via Git (porcelain output)
-local function get_changed_files()
-    local output = vim.fn.systemlist("git status --porcelain")
+local function get_changed_files(path)
+    local cmd = "git status --porcelain"
+    if path then
+         cmd = "cd " .. vim.fn.shellescape(path) .. " && " .. cmd
+    end
+    local output = vim.fn.systemlist(cmd)
     local files = {}
 
     -- strip heading of porcelain output and insert into table
     for _, line in ipairs(output) do
         local filename = line:sub(4)
-        table.insert(files, filename)
+        if is_submodule(filename) then
+            local sub_files = get_changed_files(filename)
+                for _, v in ipairs(sub_files) do
+                    table.insert(files, filename .. "/" .. v)
+                end
+        else
+            table.insert(files, filename)
+        end
     end
 
     return files
