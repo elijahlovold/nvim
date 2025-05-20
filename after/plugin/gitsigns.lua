@@ -76,10 +76,7 @@ end
 
 -- Get list of changed files via Git (porcelain output)
 local function get_changed_files(path)
-    local cmd = "git status --porcelain"
-    if path then
-         cmd = "cd " .. vim.fn.shellescape(path) .. " && " .. cmd
-    end
+    local cmd = "git -C \"" .. path .. "\" status --porcelain"
     local output = vim.fn.systemlist(cmd)
     local files = {}
 
@@ -101,7 +98,7 @@ end
 
 -- Jump to next/previous changed file
 local function jump_to_changed_file(next)
-    local files = get_changed_files()
+    local files = get_changed_files("")
     if #files == 0 then return end
 
     local current = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":.")
