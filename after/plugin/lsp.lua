@@ -88,6 +88,7 @@ cmp.setup({
         ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
     }),
     sources = cmp.config.sources({
+        { name = 'path' },
         { name = 'nvim_lsp' },
         { name = 'luasnip' }, -- For luasnip users.
     }, {
