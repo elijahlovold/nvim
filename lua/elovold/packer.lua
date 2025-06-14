@@ -67,7 +67,7 @@ return require('packer').startup(function(use)
 
   use {
       'nvim-lualine/lualine.nvim',
-      -- requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+      requires = { 'nvim-tree/nvim-web-devicons', opt = true }
   }
 
   use {
@@ -96,6 +96,20 @@ return require('packer').startup(function(use)
   use 'RRethy/nvim-align'
 
   use 'eandrju/cellular-automaton.nvim'
+
+  use 'OXY2DEV/markview.nvim'
+
+  -- python debugger
+  --
+  use {
+      'mfussenegger/nvim-dap',
+      requires = {
+          "nvim-neotest/nvim-nio",
+          "rcarriga/nvim-dap-ui",
+          "mfussenegger/nvim-dap-python",
+          "theHamsta/nvim-dap-virtual-text",
+      }
+  }
 
   end)
 

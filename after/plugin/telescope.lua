@@ -3,6 +3,12 @@ vim.keymap.set('n', '<leader>pg', builtin.git_files, {})
 
 local function find_files()
     builtin.find_files({
+        file_ignore_patterns = {
+            "%.rst$",
+            "%.png$",
+            "%.jpeg$",
+            "%.raw$",
+        },
         -- no_ignore = true,
         attach_mappings = function(prompt_bufnr, map)
             map('i', '<A-j>', require('telescope.actions').move_selection_next)
