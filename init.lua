@@ -1,2 +1,2 @@
-require("elovold")
-
+require("config")
+require("lazy").setup("plugins")
