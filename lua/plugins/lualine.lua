@@ -33,7 +33,7 @@ return {
         lualine_a = {'mode'},
         lualine_b = {'branch'},
         lualine_c = {
-          {'filename', path = 1 },
+          {'filename', path = 0 },
         },
         lualine_x = {'encoding', 'filetype'},
         lualine_y = {'progress'},

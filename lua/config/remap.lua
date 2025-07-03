@@ -29,15 +29,11 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("n", "*", "*zz")
 vim.keymap.set("n", "#", "#zz")
 
--- greatest remap ever
-vim.keymap.set("x", "<leader>p", [["_dP]])
-vim.keymap.set("n", "<leader>P", [[viw"_dP]])
-
--- next greatest remap ever : asbjornHaland
-vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
-vim.keymap.set("n", "<leader>Y", [["+Y]])
-
+vim.keymap.set("n", "<leader>P", [[viwP]])
 vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
+
+-- vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
+-- vim.keymap.set("n", "<leader>Y", [["+Y]])
 
 vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
@@ -61,28 +57,6 @@ vim.api.nvim_set_keymap('n', '<leader>/n', ':Oil ~/.config/nvim/lua/elovold<CR>'
 vim.api.nvim_set_keymap('n', '<leader>/N', ':Oil ~/.config/nvim/after/plugin<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>/i', ':e ~/.config/i3/config<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>/b', ':e ~/Documents/bible_kjv.txt<CR>', { noremap = true, silent = true })
-
--- Function to add N spaces at column 60
-function add_spaces_to_column_n()
-    local n = vim.fn.input("Number of spaces: ")
-    if n:match("^%d+$") then
-        n = tonumber(n)
-        local spaces = string.rep(" ", n)
-        vim.cmd('normal! \"ad$')
-        vim.cmd("normal! i" .. spaces .. "")
-
-        vim.cmd("normal! " .. n .. "|d$")  -- Jump to column n and delete to the end of the line
-        vim.cmd('normal! \"apb')
-    else
-        print("Please enter a valid number.")
-    end
-end
-
--- Mapping <leader>> to the function
-vim.api.nvim_set_keymap('n', '<leader>>', ':lua add_spaces_to_column_n()<CR>', { noremap = true, silent = true })
-
--- vim.keymap.set({'n', 'i', 'v'}, '<A-j>', '<Down>', { noremap = true })
--- vim.keymap.set({'n', 'i', 'v'}, '<A-k>', '<Up>', { noremap = true })
 
 -- Create a function to toggle wrap and remap j/k
 function toggle_wrap_and_remap()
