@@ -62,7 +62,7 @@ return {
       vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true, formatting_options = {tabSize = 4, insertSpaces = true}})<cr>', opts)
       vim.keymap.set('n', '<leader>vrs', '<cmd>LspRestart<cr>', opts)
       vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
-      vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+      vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
       vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
       vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
       vim.keymap.set("n", "<leader>td", '<cmd>lua ToggleDiagnostics()<CR>', opts)
