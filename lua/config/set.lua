@@ -146,15 +146,15 @@ vim.api.nvim_create_autocmd("BufRead", {
     end,
   })
 
-vim.api.nvim_create_autocmd("VimEnter", {
-  once = true,
-  callback = function()
-    if vim.fn.argc() == 0 and vim.v.oldfiles[1] and vim.fn.filereadable(vim.v.oldfiles[1]) == 1 then
-      local f = vim.fn.fnameescape(vim.v.oldfiles[1])
-      vim.cmd("edit " .. f)
-      -- signal to Lazy that we opened a file
-      vim.cmd("doautocmd BufReadPre")
-      vim.cmd("doautocmd BufReadPost")
-    end
-  end,
-})
+-- vim.api.nvim_create_autocmd("VimEnter", {
+--   once = true,
+--   callback = function()
+--     if vim.fn.argc() == 0 and vim.v.oldfiles[1] and vim.fn.filereadable(vim.v.oldfiles[1]) == 1 then
+--       local f = vim.fn.fnameescape(vim.v.oldfiles[1])
+--       vim.cmd("edit " .. f)
+--       -- signal to Lazy that we opened a file
+--       vim.cmd("doautocmd BufReadPre")
+--       vim.cmd("doautocmd BufReadPost")
+--     end
+--   end,
+-- })

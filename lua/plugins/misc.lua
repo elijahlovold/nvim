@@ -1,5 +1,6 @@
 return {
   'tpope/vim-fugitive',
+  'tpope/vim-repeat',
   'tpope/vim-surround',
   'stevearc/dressing.nvim',
   'RRethy/nvim-align',

@@ -8,11 +8,14 @@ return {
 
     -- Autocompletion
     {'hrsh7th/nvim-cmp'},
-    {'hrsh7th/cmp-buffer'},
     {'hrsh7th/cmp-path'},
-    {'saadparwaiz1/cmp_luasnip'},
+    {'hrsh7th/cmp-buffer'},
     {'hrsh7th/cmp-nvim-lsp'},
     {'hrsh7th/cmp-nvim-lua'},
+    {'hrsh7th/cmp-calc'},
+    {'hrsh7th/cmp-emoji'},
+    {'uga-rosa/cmp-dictionary'},
+    {'saadparwaiz1/cmp_luasnip'},
 
     -- Snippets
     {'L3MON4D3/LuaSnip'},
@@ -50,7 +53,10 @@ return {
     local lsp_attach = function(client, bufnr)
       local opts = {buffer = bufnr}
 
-      vim.keymap.set('n', 'K',  vim.lsp.buf.hover, opts)
+      vim.keymap.set('n', 'K', function()
+          vim.lsp.buf.hover()
+          vim.lsp.buf.document_highlight()
+      end, opts)
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
       vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
       vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
@@ -68,6 +74,12 @@ return {
       vim.keymap.set("n", "<leader>td", '<cmd>lua ToggleDiagnostics()<CR>', opts)
     end
 
+    vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+        callback = function()
+            vim.lsp.buf.clear_references()
+        end,
+    })
+
     lsp_zero.extend_lspconfig({
       sign_text = true,
       lsp_attach = lsp_attach,
@@ -81,12 +93,13 @@ return {
 
     local cmp = require('cmp')
     local cmp_action = require('lsp-zero').cmp_action()
+    local luasnip = require('luasnip')
 
     -- Setup nvim-cmp with the mappings
     cmp.setup({
       snippet = {
         expand = function(args)
-          require('luasnip').lsp_expand(args.body)
+          luasnip.lsp_expand(args.body)
         end,
       },
       window = {
@@ -103,15 +116,51 @@ return {
 
         ['<Tab>'] = cmp_action.luasnip_supertab(),
         ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
+
+        ['<M-l>'] = cmp.mapping.select_next_item(),
+        ['<M-h>'] = cmp.mapping.select_prev_item(),
+
+        -- snippets
+        ['<C-l>'] = function(fallback)
+            if luasnip.jumpable(1) then
+                luasnip.jump(1)
+            else
+                fallback()
+            end
+        end,
+        ['<C-h>'] = function(fallback)
+            if luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end,
       }),
       sources = cmp.config.sources({
         { name = 'path' },
-        { name = 'nvim_lsp' },
-        { name = 'luasnip' }, -- For luasnip users.
-      }, {
         { name = 'buffer' },
+        { name = 'luasnip' },
+        { name = 'nvim_lsp' },
+
+        -- extras
+        { name = 'calc' },
+        { name = 'dictionary' },
       }),
     })
+
+-- markdown + text: add dictionary + emoji + spell
+cmp.setup.filetype({ 'markdown', 'text', 'tex' }, {
+    sources = cmp.config.sources({
+        { name = 'buffer' },
+        { name = 'path' },
+        { name = 'luasnip' },
+
+        -- { name = 'dictionary' },
+        { name = 'calc' },
+        { name = 'emoji' },
+        -- { name = 'spell' },
+    }),
+})
 
     vim.api.nvim_set_keymap('n', '<leader>tl', [[<cmd>lua ToggleLsp()<CR>]], { noremap = true, silent = true })
 
@@ -129,13 +178,15 @@ return {
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
     -- setup language servers
-    require('lspconfig').pyright.setup{
+    local lspconfig = require('lspconfig')
+
+    lspconfig.pyright.setup{
       capabilities=capabilities
     }
-    require('lspconfig').clangd.setup{
+    lspconfig.clangd.setup{
       capabilities=capabilities
     }
-    require('lspconfig').lua_ls.setup{
+    lspconfig.lua_ls.setup{
       settings = {
         Lua = {
           -- Diagnostics settings
@@ -160,16 +211,25 @@ return {
       capabilities=capabilities
     }
 
-    require('lspconfig').html.setup{
+    lspconfig.html.setup{
       capabilities=capabilities
     }
 
-    require('lspconfig').ts_ls.setup{
+    lspconfig.ts_ls.setup{
       capabilities=capabilities
     }
 
-    require('lspconfig').svlangserver.setup{
+    lspconfig.svlangserver.setup{
       capabilities=capabilities
     }
+
+    -- lspconfig.ltex.setup({
+    --     filetypes = { "tex", "plaintex", "markdown", "text" },
+    --     settings = {
+    --         ltex = {
+    --             language = "en-US",
+    --         },
+    --     },
+    -- })
   end
 }
