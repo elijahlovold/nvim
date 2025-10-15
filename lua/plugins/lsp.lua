@@ -175,61 +175,53 @@ cmp.setup.filetype({ 'markdown', 'text', 'tex' }, {
       end
     end
 
-    local capabilities = require('cmp_nvim_lsp').default_capabilities()
+    local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-    -- setup language servers
-    local lspconfig = require('lspconfig')
-
-    lspconfig.pyright.setup{
-      capabilities=capabilities
-    }
-    lspconfig.clangd.setup{
-      capabilities=capabilities
-    }
-    lspconfig.lua_ls.setup{
+    -- Define config for each server
+    vim.lsp.config("pyright", {
+      capabilities = capabilities,
+    })
+    vim.lsp.config("clangd", {
+      capabilities = capabilities,
+    })
+    vim.lsp.config("lua_ls", {
+      capabilities = capabilities,
       settings = {
         Lua = {
-          -- Diagnostics settings
           diagnostics = {
-            globals = {'vim'},  -- Add 'vim' as a global to avoid diagnostics warnings
+            globals = { "vim" },
           },
-          -- Runtime settings
           runtime = {
-            version = 'LuaJIT',  -- LuaJIT is the most common version for Neovim
-            path = vim.split(package.path, ';'),  -- Ensure Lua can find required modules
+            version = "LuaJIT",
+            path = vim.split(package.path, ";"),
           },
-          -- Workspace settings (including Neovim's runtime)
           workspace = {
-            library = vim.api.nvim_get_runtime_file("", true),  -- Include Neovim's runtime files
+            library = vim.api.nvim_get_runtime_file("", true),
           },
-          -- Completion settings (optional)
           completion = {
-            callSnippet = "Replace",  -- Defines how snippets are handled
+            callSnippet = "Replace",
           },
         },
       },
-      capabilities=capabilities
-    }
+    })
+    vim.lsp.config("html", {
+      capabilities = capabilities,
+    })
+    vim.lsp.config("ts_ls", {
+      capabilities = capabilities,
+    })
+    vim.lsp.config("svlangserver", {
+      capabilities = capabilities,
+    })
 
-    lspconfig.html.setup{
-      capabilities=capabilities
-    }
-
-    lspconfig.ts_ls.setup{
-      capabilities=capabilities
-    }
-
-    lspconfig.svlangserver.setup{
-      capabilities=capabilities
-    }
-
-    -- lspconfig.ltex.setup({
-    --     filetypes = { "tex", "plaintex", "markdown", "text" },
-    --     settings = {
-    --         ltex = {
-    --             language = "en-US",
-    --         },
-    --     },
-    -- })
+    -- Enable them
+    vim.lsp.enable({
+      "pyright",
+      "clangd",
+      "lua_ls",
+      "html",
+      "ts_ls",
+      "svlangserver",
+    })
   end
 }
