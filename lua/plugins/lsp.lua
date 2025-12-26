@@ -55,7 +55,10 @@ return {
 
       vim.keymap.set('n', 'K', function()
           vim.lsp.buf.hover()
-          vim.lsp.buf.document_highlight()
+          local _client = vim.lsp.get_clients({ bufnr = 0 })[1]
+          if _client and _client.server_capabilities.documentHighlightProvider then
+              vim.lsp.buf.document_highlight()
+          end
       end, opts)
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
       vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
@@ -90,6 +93,7 @@ return {
     require('luasnip.loaders.from_vscode').lazy_load()
     -- Optionally, you can also load snippets from friendly-snippets
     require('luasnip.loaders.from_vscode').load({include = {'*'}})
+    require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/lua/snippets" })
 
     local cmp = require('cmp')
     local cmp_action = require('lsp-zero').cmp_action()
@@ -112,7 +116,7 @@ return {
 
         ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-e>'] = cmp.mapping.abort(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        ['<CR>'] = cmp.mapping.confirm(),
 
         ['<Tab>'] = cmp_action.luasnip_supertab(),
         ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),

@@ -4,6 +4,9 @@ return {
     local gs = require('gitsigns')
 
     gs.setup {
+      signs = {},
+      numhl = true,
+      -- sign_priority = 20,
       on_attach = function(bufnr)
         local function map(mode, l, r, opts)
           opts = opts or {}

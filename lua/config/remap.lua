@@ -17,9 +17,6 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true })
 vim.keymap.set("t", "<A-j>", "<Down>", { noremap = true, silent = true })
 vim.keymap.set("t", "<A-k>", "<Up>", { noremap = true, silent = true })
 
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
-
 vim.keymap.set("n", "J", "mzJ`z")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
@@ -32,6 +29,7 @@ vim.keymap.set("n", "#", "#zz")
 vim.keymap.set("n", "<leader>P", [[viwP]])
 vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
 
+vim.keymap.set("v", "<C-x>", [[:s/, /,\r/g<CR>]])
 -- vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
 -- vim.keymap.set("n", "<leader>Y", [["+Y]])
 
@@ -44,7 +42,6 @@ vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
 vim.api.nvim_set_keymap("i", "<C-.>", "<Tab>", { noremap = true, silent = true })
 
@@ -60,11 +57,23 @@ vim.api.nvim_set_keymap('n', '<leader>/N', ':Oil ~/.config/nvim/after/plugin<CR>
 vim.api.nvim_set_keymap('n', '<leader>/i', ':e ~/.config/i3/config<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>/b', ':e ~/Documents/bible_kjv.txt<CR>', { noremap = true, silent = true })
 
+vim.keymap.set('n', '<leader>tw', function()
+  if vim.o.textwidth == 0 then
+    vim.o.textwidth = 80
+    vim.o.formatoptions = vim.o.formatoptions .. 't'
+    print("Auto-wrap: ON (80 cols)")
+  else
+    vim.o.textwidth = 0
+    vim.o.formatoptions = vim.o.formatoptions:gsub('t', '')
+    print("Auto-wrap: OFF")
+  end
+end, { desc = "Toggle text wrap at 80 cols" })
+
 -- Create a function to toggle wrap and remap j/k
-function toggle_wrap_and_remap()
+vim.keymap.set('n', '<leader>w', function()
   -- Check if line wrap is currently enabled
   local wrap_enabled = vim.wo.wrap
-  
+
   if wrap_enabled then
     -- If wrap is enabled, disable it and restore default behavior for j/k
     vim.wo.wrap = false
@@ -94,10 +103,7 @@ function toggle_wrap_and_remap()
     vim.api.nvim_set_keymap('n', '$', 'g$', { noremap = true, silent = true })
     vim.api.nvim_set_keymap('v', '$', 'g$', { noremap = true, silent = true })
   end
-end
-
--- Map the toggle function to a key shortcut
-vim.api.nvim_set_keymap('n', '<leader>w', ':lua toggle_wrap_and_remap()<CR>', { noremap = true, silent = true })
+end)
 
 -- vim.api.nvim_set_keymap('n', '<leader>pl', '<CR>:!pdflatex %<CR>', { noremap = true, silent = true })
 function CompileLaTeX()
@@ -115,3 +121,28 @@ end
 
 -- Map the function to a keybinding (e.g., <leader>p)
 vim.api.nvim_set_keymap('n', '<leader>pl', ':lua CompileLaTeX()<CR>', { noremap = true, silent = true })
+
+vim.keymap.set("v", "<leader>et", function()
+    print("timed")
+    local buf = 0
+    local s = vim.fn.getpos("'<")
+    local e = vim.fn.getpos("'>")
+
+    local sr = s[2] - 1
+    local er = e[2] - 1
+
+    local indent = string.match(vim.api.nvim_buf_get_lines(buf, sr, sr+1, false)[1], "^%s*") or ""
+
+    local before = {
+        indent .. "import time",
+        indent .. "t0 = time.perf_counter()",
+    }
+
+    local after = {
+        indent .. "print(time.perf_counter() - t0)",
+    }
+
+    vim.api.nvim_buf_set_text(buf, er+1, 0, er+1, 0, after)
+    vim.api.nvim_buf_set_text(buf, sr, 0, sr, 0, before)
+end)
+

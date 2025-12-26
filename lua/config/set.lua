@@ -19,6 +19,8 @@ local cache = os.getenv("XDG_CACHE_HOME") or vim.fn.stdpath("cache")
 vim.opt.undodir = cache .. "/nvim/undodir"
 vim.opt.undofile = true
 
+vim.opt.listchars = { trail = "·" }
+
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
