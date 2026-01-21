@@ -1,7 +1,8 @@
 return {
   "nvim-treesitter/nvim-treesitter", 
   dependencies = {
-    'nvim-treesitter/nvim-treesitter-context', 
+    'nvim-treesitter/nvim-treesitter-context',
+    'nvim-treesitter/nvim-treesitter-textobjects',
     'nvim-treesitter/playground' 
   },
   branch = 'master', 
@@ -10,6 +11,19 @@ return {
 
   config = function()
     require'nvim-treesitter.configs'.setup {
+      textobjects = {
+        lookahead = true,  -- optional, jumps to next textobject
+        select = {
+            enable = true,
+            keymaps = {
+                ["ib"] = "@block.inner",
+                ["ab"] = "@block.outer",
+                ["af"] = "@function.outer",  -- full def
+                ["if"] = "@function.inner"   -- inside def
+            },
+        },
+      },
+
       -- A list of parser names, or "all" (the listed parsers MUST always be installed)
       ensure_installed = { "c", "python", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
 
