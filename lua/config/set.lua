@@ -19,6 +19,8 @@ local cache = os.getenv("XDG_CACHE_HOME") or vim.fn.stdpath("cache")
 vim.opt.undodir = cache .. "/nvim/undodir"
 vim.opt.undofile = true
 
+vim.opt.path:append("**")
+
 vim.opt.listchars = { trail = "·" }
 
 vim.opt.hlsearch = false
@@ -70,6 +72,14 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "markdown",
+    callback = function()
+        vim.opt_local.spell = true
+        vim.opt_local.spelllang = { "en_us" }
+    end,
+})
+
 vim.api.nvim_create_augroup("CloseQuickfixAfterSelection", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
   group = "CloseQuickfixAfterSelection",
@@ -87,6 +97,52 @@ vim.api.nvim_create_autocmd("BufRead", {
   command = 'set filetype=python',
   group = 'filetypedetect',
 })
+
+-- function to grab tags from the vault location
+local function get_tags()
+    local paths = require("config.paths")
+    local file = vim.fn.expand(paths.vault_tags)
+    local lines = vim.fn.readfile(file)
+
+    local tags = {}
+    local in_section = false
+
+    for _, line in ipairs(lines) do
+        -- read until we find the # Tags section
+        if not in_section then
+            if line:match("^# Tags") then
+                in_section = true
+            end
+        else
+            if line:match("^%* ") then
+                local tag = line:gsub("^%* ", "")
+                table.insert(tags, tag)
+            end
+        end
+    end
+
+    return tags
+end
+
+vim.keymap.set('i', '<C-y>', function()
+    local tags = get_tags()
+    require('telescope.pickers').new({}, {
+        prompt_title = "Select tag",
+        finder = require('telescope.finders').new_table { results = tags },
+        sorter = require('telescope.config').values.generic_sorter({}),
+        attach_mappings = function(prompt_bufnr, _)
+            local actions = require('telescope.actions')
+            local action_state = require('telescope.actions.state')
+            actions.select_default:replace(function()
+                local selection = action_state.get_selected_entry()
+                actions.close(prompt_bufnr)
+                vim.api.nvim_put({selection[1]}, 'c', true, true)
+                vim.cmd('startinsert!')
+            end)
+            return true
+        end
+    }):find()
+end, { desc = "Pick tag" })
 
 -- -- Ensure nvim-web-devicons is loaded before Netrw
 -- require'nvim-web-devicons'.setup()
@@ -129,24 +185,6 @@ vim.api.nvim_create_autocmd("BufRead", {
   vim.g.loaded_zipPlugin = 1
   vim.g.loaded_zip = 1
   vim.g.loaded_gzip = 1
-
-  vim.api.nvim_create_autocmd("BufReadCmd", {
-    pattern = "*.docx",
-    callback = function(args)
-      local filepath = vim.fn.expand(args.file)
-      local tmpfile = vim.fn.tempname() .. ".txt"
-      local cmd = string.format("docx2txt '%s' > '%s'", filepath, tmpfile)
-      os.execute(cmd)
-
-      -- Read contents into current buffer
-      vim.cmd("silent 0read " .. tmpfile)
-      vim.bo.buftype = "nofile"
-      vim.bo.bufhidden = "hide"
-      vim.bo.swapfile = false
-      vim.bo.modifiable = false
-      vim.bo.readonly = true
-    end,
-  })
 
 -- vim.api.nvim_create_autocmd("VimEnter", {
 --   once = true,

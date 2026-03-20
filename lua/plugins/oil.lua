@@ -5,6 +5,13 @@ return {
     local oil = require('oil')
 
     oil.setup({
+        -- EXPERIMENTAL support for performing file operations with git
+        -- Return true to automatically git add/mv/rm files
+      git = {
+        -- add = function(path) return true end,
+        mv = function(src_path, dest_path) return true end,
+        -- rm = function(path) return true end,
+      },
 
       -- Correct structure
       view_options = {
@@ -37,12 +44,12 @@ return {
     vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
     vim.keymap.set("n", "<leader>f", function()
-      local entry = oil.get_cursor_entry()
-      if entry then
+        local entry = oil.get_cursor_entry()
+        if not entry then return end
+
         local filepath = oil.get_current_dir() .. entry.name
-        vim.fn.jobstart({ "sxiv", filepath }, { detach = true })
-      end
-    end, { desc = "Open single file with sxiv" })
+        vim.fn.jobstart({ "xdg-open", filepath }, { detach = true })
+    end, { desc = "Open file with xdg-open" })
 
     vim.keymap.set("v", "<leader>f", function()
       local dir = oil.get_current_dir()

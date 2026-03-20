@@ -125,20 +125,13 @@ return {
         ['<M-h>'] = cmp.mapping.select_prev_item(),
 
         -- snippets
-        ['<C-l>'] = function(fallback)
-            if luasnip.jumpable(1) then
-                luasnip.jump(1)
-            else
-                fallback()
-            end
+        ['<C-l>'] = function()
+            luasnip.change_choice(1)
         end,
-        ['<C-h>'] = function(fallback)
-            if luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
+        ['<C-h>'] = function()
+            luasnip.change_choice(-1)
         end,
+        ['<C-CR>'] = require("luasnip.extras.select_choice"),
       }),
       sources = cmp.config.sources({
         { name = 'path' },
@@ -158,11 +151,11 @@ cmp.setup.filetype({ 'markdown', 'text', 'tex' }, {
         { name = 'buffer' },
         { name = 'path' },
         { name = 'luasnip' },
+        { name = 'spell' },
 
         -- { name = 'dictionary' },
         { name = 'calc' },
         { name = 'emoji' },
-        -- { name = 'spell' },
     }),
 })
 

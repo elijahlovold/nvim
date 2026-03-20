@@ -44,7 +44,7 @@ return {
           -- Call Telescope live_grep with custom vimgrep_arguments including the file type filter
           builtin.live_grep({
             vimgrep_arguments = {
-              'rg',
+              'rga',
               '--color=never',
               '--no-heading',
               '--with-filename',
@@ -65,10 +65,15 @@ return {
       end)
     end)
 
+    vim.keymap.set("n", "<leader>pu",
+        require("telescope.builtin").current_buffer_fuzzy_find,
+        { desc = "Fuzzy search in buffer" }
+    )
+
     vim.keymap.set('n', '<leader>ps', function()
       builtin.live_grep({
         vimgrep_arguments = {
-          'rg',
+          'rga',
           '--color=never',
           '--no-heading',
           '--with-filename',

@@ -97,27 +97,25 @@ return {
     --~-~-~-~- Language Adapters -~-~-~-~--
     require("dap-python").setup("python3")
 
-    dap.adapters.codelldb = {
-      type = "server",
-      port = "${port}",
-      executable = {
-        command = "codelldb",
-        args = { "--port", "${port}" },
-      },
+    dap.adapters.gdb = {
+      type = "executable",
+      command = "gdb",
+      args = { "-i", "dap" },
     }
 
     dap.configurations.cpp = {
       {
-        name = "Launch file",
-        type = "codelldb",
+        name = "Launch",
+        type = "gdb",
         request = "launch",
         program = function()
-          return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+          return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
         end,
-        cwd = '${workspaceFolder}',
-        stopOnEntry = false,
+        cwd = "${workspaceFolder}",
+        stopAtBeginningOfMainSubprogram = false,
       },
     }
+
     dap.configurations.c = dap.configurations.cpp
 
   end

@@ -36,6 +36,8 @@ vim.keymap.set("v", "<C-x>", [[:s/, /,\r/g<CR>]])
 vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
+vim.keymap.set('n', '<leader>z', '1z=', { noremap = true, silent = true })
+
 vim.keymap.set("n", "<C-l>", "<cmd>cnext<CR>zz")
 vim.keymap.set("n", "<C-h>", "<cmd>cprev<CR>zz")
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
