@@ -98,52 +98,6 @@ vim.api.nvim_create_autocmd("BufRead", {
   group = 'filetypedetect',
 })
 
--- function to grab tags from the vault location
-local function get_tags()
-    local paths = require("config.paths")
-    local file = vim.fn.expand(paths.vault_tags)
-    local lines = vim.fn.readfile(file)
-
-    local tags = {}
-    local in_section = false
-
-    for _, line in ipairs(lines) do
-        -- read until we find the # Tags section
-        if not in_section then
-            if line:match("^# Tags") then
-                in_section = true
-            end
-        else
-            if line:match("^%* ") then
-                local tag = line:gsub("^%* ", "")
-                table.insert(tags, tag)
-            end
-        end
-    end
-
-    return tags
-end
-
-vim.keymap.set('i', '<C-y>', function()
-    local tags = get_tags()
-    require('telescope.pickers').new({}, {
-        prompt_title = "Select tag",
-        finder = require('telescope.finders').new_table { results = tags },
-        sorter = require('telescope.config').values.generic_sorter({}),
-        attach_mappings = function(prompt_bufnr, _)
-            local actions = require('telescope.actions')
-            local action_state = require('telescope.actions.state')
-            actions.select_default:replace(function()
-                local selection = action_state.get_selected_entry()
-                actions.close(prompt_bufnr)
-                vim.api.nvim_put({selection[1]}, 'c', true, true)
-                vim.cmd('startinsert!')
-            end)
-            return true
-        end
-    }):find()
-end, { desc = "Pick tag" })
-
 -- -- Ensure nvim-web-devicons is loaded before Netrw
 -- require'nvim-web-devicons'.setup()
 
@@ -185,16 +139,3 @@ end, { desc = "Pick tag" })
   vim.g.loaded_zipPlugin = 1
   vim.g.loaded_zip = 1
   vim.g.loaded_gzip = 1
-
--- vim.api.nvim_create_autocmd("VimEnter", {
---   once = true,
---   callback = function()
---     if vim.fn.argc() == 0 and vim.v.oldfiles[1] and vim.fn.filereadable(vim.v.oldfiles[1]) == 1 then
---       local f = vim.fn.fnameescape(vim.v.oldfiles[1])
---       vim.cmd("edit " .. f)
---       -- signal to Lazy that we opened a file
---       vim.cmd("doautocmd BufReadPre")
---       vim.cmd("doautocmd BufReadPost")
---     end
---   end,
--- })
