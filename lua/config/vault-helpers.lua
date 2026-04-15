@@ -29,8 +29,8 @@ local function get_tags()
                 in_section = true
             end
         else
-            if line:match("^%* ") then
-                local tag = line:gsub("^%* ", "")
+            if line:match("^%- ") then
+                local tag = line:gsub("^%- ", "")
                 table.insert(tags, tag)
             end
         end
