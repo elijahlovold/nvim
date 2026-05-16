@@ -24,11 +24,10 @@ ls.add_snippets("markdown", {
       t("wip"),
       t("complete"),
       t("perpetual"),
-      t("archived"),
     }),
     t({"", "created: "}),
     f(function()
-      return os.date("!%Y-%m-%d")
+      return os.date("%Y-%m-%d")
     end, {}),
     t({
       "",

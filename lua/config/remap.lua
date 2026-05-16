@@ -59,6 +59,27 @@ vim.api.nvim_set_keymap('n', '<leader>/N', ':Oil ~/.config/nvim/after/plugin<CR>
 vim.api.nvim_set_keymap('n', '<leader>/i', ':e ~/.config/i3/config<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>/b', ':e ~/Documents/bible_kjv.txt<CR>', { noremap = true, silent = true })
 
+-- title case
+vim.keymap.set("v", "<leader>u", "<cmd>s/\\<./\\l&/g<CR><Esc>")
+vim.keymap.set("v", "<leader>U", "<cmd>s/\\<./\\u&/g<CR><Esc>")
+
+-- search with firefox
+vim.keymap.set("v", "<leader>fx", function()
+  local s = vim.fn.getpos("v")
+  local e = vim.fn.getpos(".")
+
+  local lines = vim.fn.getline(s[2], e[2])
+
+  lines[#lines] = string.sub(lines[#lines], 1, e[3])
+  lines[1] = string.sub(lines[1], s[3])
+
+  local selection = table.concat(lines, "\n")
+  selection = selection:gsub("^%s+", ""):gsub("%s+$", "")
+
+  vim.fn.system({ "firefox", "--search", selection })
+end)
+
+
 vim.keymap.set('n', '<leader>tw', function()
   if vim.o.textwidth == 0 then
     vim.o.textwidth = 80

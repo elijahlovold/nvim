@@ -43,6 +43,16 @@ return {
 
     vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
+    vim.keymap.set("n", "<leader>o", function()
+        local dir = require("oil").get_current_dir()
+
+        if not dir then
+            dir = vim.fn.expand("%:p:h")
+        end
+
+        vim.fn.jobstart({"kitty", "-e", "yazi", dir, }, { detach = true, })
+    end)
+
     vim.keymap.set("n", "<leader>f", function()
         local entry = oil.get_cursor_entry()
         if not entry then return end
@@ -50,6 +60,18 @@ return {
         local filepath = oil.get_current_dir() .. entry.name
         vim.fn.jobstart({ "xdg-open", filepath }, { detach = true })
     end, { desc = "Open file with xdg-open" })
+
+    vim.keymap.set("n", "<leader>y", function()
+      local entry = oil.get_cursor_entry()
+      if not entry then return end
+
+      local dir = oil.get_current_dir()
+      local fullpath = dir .. entry.name
+
+      local resolved = vim.fn.fnamemodify(fullpath, ":p")
+
+      vim.fn.setreg("+", resolved)
+    end)
 
     vim.keymap.set("v", "<leader>f", function()
       local dir = oil.get_current_dir()
@@ -72,7 +94,7 @@ return {
         end
       end
 
-      vim.fn.jobstart(vim.list_extend({ "sxiv", "-t" }, selected), { detach = true })
+      vim.fn.jobstart(vim.list_extend({ "nsxiv", "-t" }, selected), { detach = true })
     end, { desc = "Open selected files with sxiv" })
   end
 }

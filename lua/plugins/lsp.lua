@@ -1,20 +1,13 @@
 return {
-  'VonHeikemen/lsp-zero.nvim',
+  'neovim/nvim-lspconfig',
   dependencies = {
-    -- LSP Support
-    {'neovim/nvim-lspconfig'},
-    {'williamboman/mason.nvim'},
-    {'williamboman/mason-lspconfig.nvim'},
-
     -- Autocompletion
     {'hrsh7th/nvim-cmp'},
     {'hrsh7th/cmp-path'},
     {'hrsh7th/cmp-buffer'},
     {'hrsh7th/cmp-nvim-lsp'},
-    {'hrsh7th/cmp-nvim-lua'},
     {'hrsh7th/cmp-calc'},
     {'hrsh7th/cmp-emoji'},
-    {'uga-rosa/cmp-dictionary'},
     {'saadparwaiz1/cmp_luasnip'},
 
     -- Snippets
@@ -22,9 +15,11 @@ return {
     {'rafamadriz/friendly-snippets'},
   },
   config = function()
-    require('mason').setup()
-
-    local lsp_zero = require('lsp-zero')
+    vim.lsp.config("gdscript", {
+      cmd = { "nc", "127.0.0.1", "6005" },
+      filetypes = { "gd", "gdscript" },
+      root_dir = vim.fs.root(0, { "project.godot", ".git" }),
+    })
 
     function ToggleDiagnostics()
       local current_config = vim.diagnostic.config()
@@ -50,32 +45,45 @@ return {
       end
     end
 
-    local lsp_attach = function(client, bufnr)
-      local opts = {buffer = bufnr}
+    vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(ev)
+      local opts = { buffer = ev.buf }
 
       vim.keymap.set('n', 'K', function()
-          vim.lsp.buf.hover()
-          local _client = vim.lsp.get_clients({ bufnr = 0 })[1]
-          if _client and _client.server_capabilities.documentHighlightProvider then
-              vim.lsp.buf.document_highlight()
-          end
-      end, opts)
+        local ft = vim.bo.filetype
+
+        print("filetype: " .. ft)
+        if ft ~= "markdown" then
+            vim.lsp.buf.hover()
+            return
+        end
+
+        local word = vim.fn.expand("<cword>")
+        local def = vim.fn.system("wn " .. word .. " -over")
+
+        if def == nil or def == "" then
+            return
+        end
+
+        vim.lsp.util.open_floating_preview(
+            vim.split(def, "\n"),
+            "text",
+            { border = "single" }
+        )
+      end, { buffer = ev.buf })
+
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
       vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-      vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-      vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, opts)
-      vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
+      vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts) -- dep
+      vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, opts) -- dep
+      vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts) -- dep
       vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, opts)
-      vim.keymap.set('n', '<leader>vrn', vim.lsp.buf.rename, opts)
-      vim.keymap.set('n', '<leader>vca', vim.lsp.buf.code_action, opts)
-      vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true, formatting_options = {tabSize = 4, insertSpaces = true}})<cr>', opts)
-      vim.keymap.set('n', '<leader>vrs', '<cmd>LspRestart<cr>', opts)
-      vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
       vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
-      vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-      vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+      vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1 })  end, opts)
+      vim.keymap.set('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, opts)
       vim.keymap.set("n", "<leader>td", '<cmd>lua ToggleDiagnostics()<CR>', opts)
-    end
+      end
+    })
 
     vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
         callback = function()
@@ -83,20 +91,11 @@ return {
         end,
     })
 
-    lsp_zero.extend_lspconfig({
-      sign_text = true,
-      lsp_attach = lsp_attach,
-      capabilities = require('cmp_nvim_lsp').default_capabilities(),
-    })
-
     -- Load VSCode snippets
-    require('luasnip.loaders.from_vscode').lazy_load()
-    -- Optionally, you can also load snippets from friendly-snippets
-    require('luasnip.loaders.from_vscode').load({include = {'*'}})
+    require("luasnip.loaders.from_vscode").lazy_load()
     require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/lua/snippets" })
 
     local cmp = require('cmp')
-    local cmp_action = require('lsp-zero').cmp_action()
     local luasnip = require('luasnip')
 
     -- Setup nvim-cmp with the mappings
@@ -118,8 +117,24 @@ return {
         ['<C-e>'] = cmp.mapping.abort(),
         ['<CR>'] = cmp.mapping.confirm(),
 
-        ['<Tab>'] = cmp_action.luasnip_supertab(),
-        ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item()
+            elseif luasnip.jumpable(1) then
+                luasnip.jump(1)
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+                cmp.select_next_item()
+            elseif luasnip.jumpable(-1) then
+                luasnip.jump(-1)
+            else
+                fallback()
+            end
+        end, { 'i', 's' }),
 
         ['<M-l>'] = cmp.mapping.select_next_item(),
         ['<M-h>'] = cmp.mapping.select_prev_item(),
@@ -141,23 +156,22 @@ return {
 
         -- extras
         { name = 'calc' },
-        { name = 'dictionary' },
       }),
     })
 
--- markdown + text: add dictionary + emoji + spell
-cmp.setup.filetype({ 'markdown', 'text', 'tex' }, {
-    sources = cmp.config.sources({
+    -- markdown + text: add dictionary + emoji + spell
+    cmp.setup.filetype({ 'markdown', 'text', 'tex' }, {
+      sources = cmp.config.sources({
         { name = 'buffer' },
+        { name = 'minuet' },
         { name = 'path' },
         { name = 'luasnip' },
         { name = 'spell' },
 
-        -- { name = 'dictionary' },
         { name = 'calc' },
         { name = 'emoji' },
-    }),
-})
+      }),
+    })
 
     vim.api.nvim_set_keymap('n', '<leader>tl', [[<cmd>lua ToggleLsp()<CR>]], { noremap = true, silent = true })
 
@@ -172,17 +186,8 @@ cmp.setup.filetype({ 'markdown', 'text', 'tex' }, {
       end
     end
 
-    local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
     -- Define config for each server
-    vim.lsp.config("pyright", {
-      capabilities = capabilities,
-    })
-    vim.lsp.config("clangd", {
-      capabilities = capabilities,
-    })
     vim.lsp.config("lua_ls", {
-      capabilities = capabilities,
       settings = {
         Lua = {
           diagnostics = {
@@ -201,24 +206,18 @@ cmp.setup.filetype({ 'markdown', 'text', 'tex' }, {
         },
       },
     })
-    vim.lsp.config("html", {
-      capabilities = capabilities,
-    })
-    vim.lsp.config("ts_ls", {
-      capabilities = capabilities,
-    })
-    vim.lsp.config("svlangserver", {
-      capabilities = capabilities,
-    })
 
     -- Enable them
     vim.lsp.enable({
+      "gdscript",
       "pyright",
       "clangd",
+      "rust_analyzer",
       "lua_ls",
       "html",
       "ts_ls",
       "svlangserver",
+      "marksman",
     })
   end
 }
