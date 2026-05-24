@@ -49,15 +49,8 @@ return {
     callback = function(ev)
       local opts = { buffer = ev.buf }
 
-      vim.keymap.set('n', 'K', function()
-        local ft = vim.bo.filetype
-
-        print("filetype: " .. ft)
-        if ft ~= "markdown" then
-            vim.lsp.buf.hover()
-            return
-        end
-
+      vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+      vim.keymap.set('n', '<leader>k', function()
         local word = vim.fn.expand("<cword>")
         local def = vim.fn.system("wn " .. word .. " -over")
 
@@ -70,8 +63,7 @@ return {
             "text",
             { border = "single" }
         )
-      end, { buffer = ev.buf })
-
+      end, opts)
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
       vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
       vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts) -- dep
@@ -167,6 +159,7 @@ return {
         { name = 'path' },
         { name = 'luasnip' },
         { name = 'spell' },
+        { name = 'nvim_lsp' },
 
         { name = 'calc' },
         { name = 'emoji' },
@@ -217,7 +210,7 @@ return {
       "html",
       "ts_ls",
       "svlangserver",
-      "marksman",
+      "markdown_oxide",
     })
   end
 }

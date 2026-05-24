@@ -6,6 +6,8 @@ return {
     local function set_default_colors()
       vim.cmd.colorscheme("tokyonight")
       vim.cmd("set background=dark")
+      vim.api.nvim_set_hl(0, "Directory", { fg = "#0037da", bold = true})
+      vim.api.nvim_set_hl(0, "OilMtime", { fg = "#99a8bf", italic = true})
 
       vim.api.nvim_set_hl(0, "Normal", { bg = "none"})
       vim.api.nvim_set_hl(0, "NormalNC", { bg = "#070d26" })
