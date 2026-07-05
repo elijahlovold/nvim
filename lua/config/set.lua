@@ -38,6 +38,11 @@ vim.opt.colorcolumn = "80"
 
 vim.opt.suffixesadd:append({".md"})
 
+-- disable zip pugin
+vim.g.loaded_zipPlugin = 1
+vim.g.loaded_zip = 1
+vim.g.loaded_gzip = 1
+
 -- init diagnostics config
 vim.diagnostic.config({
   virtual_text = true,
@@ -56,14 +61,6 @@ end
 vim.api.nvim_create_autocmd("TextYankPost", {
   callback = highlight_yank,
 })
-
-function toggle_colorcolumn()
-  if vim.wo.colorcolumn == "" then
-    vim.wo.colorcolumn = "80"  -- Set to 80 if not set
-  else
-    vim.wo.colorcolumn = ""    -- Clear if it's set
-  end
-end
 
 vim.api.nvim_create_autocmd('FileType', {
   callback = function() pcall(vim.treesitter.start) end,
@@ -93,53 +90,9 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-vim.g.netrw_icons = 1       -- Enable icons for files/folders
-
 vim.api.nvim_create_augroup('filetypedetect', { clear = true })
 vim.api.nvim_create_autocmd("BufRead", {
   pattern = '*.spec',
   command = 'set filetype=python',
   group = 'filetypedetect',
 })
-
--- -- Ensure nvim-web-devicons is loaded before Netrw
--- require'nvim-web-devicons'.setup()
-
--- -- Function to show icons in Netrw
--- vim.cmd [[
---   augroup NetrwIcons
---     autocmd!
---     autocmd FileType netrw setlocal listchars+=icon
---   augroup END
--- ]]
-
-
--- -- Netrw settings
--- vim.g.netrw_liststyle = 0        -- Use tree view (directories nested with indentation)
-
--- vim.api.nvim_set_keymap('n', '<leader>tn', ':lua ToggleNetrwMode()<CR>', { noremap = true, silent = true })
-
--- function ToggleNetrwMode()
-  --   if vim.g.netrw_liststyle == 3 then
-  --       print("helllo")
-  --       vim.g.netrw_liststyle = 0
-  --   else
-  --       print("goodbye")
-  --       vim.g.netrw_liststyle = 3
-  --   end
-  -- end
-
-  vim.keymap.set("n", "<leader>b", function()
-    vim.ui.input({ prompt = "Bible passage: " }, function(input)
-      if input == nil or input == "" then return end
-
-      local output = vim.fn.system("bible " .. input)
-      local lines = vim.split(output, "\n", { plain = true })
-      vim.api.nvim_put(lines, "l", true, true)  -- put below cursor, move cursor
-    end)
-  end, { desc = "Fetch Bible verse and copy to register" })
-
-  -- disable zip pugin
-  vim.g.loaded_zipPlugin = 1
-  vim.g.loaded_zip = 1
-  vim.g.loaded_gzip = 1

@@ -64,6 +64,7 @@ return {
             { border = "single" }
         )
       end, opts)
+      vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
       vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
       vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts) -- dep
@@ -208,7 +209,6 @@ return {
       "rust_analyzer",
       "lua_ls",
       "html",
-      "ts_ls",
       "svlangserver",
       "markdown_oxide",
     })

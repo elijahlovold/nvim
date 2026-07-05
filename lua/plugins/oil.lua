@@ -69,7 +69,7 @@ return {
         refresh_oil_buffers()
     end, { desc = "Toggle oil mtime column" })
 
-    vim.keymap.set("n", "<leader>o", function()
+    vim.keymap.set("n", "<leader>oy", function()
         local dir = oil.get_current_dir()
 
         if not dir then
@@ -77,6 +77,16 @@ return {
         end
 
         vim.fn.jobstart({"kitty", "-e", "yazi", dir, }, { detach = true, })
+    end)
+
+    vim.keymap.set("n", "<leader>oa", function()
+        local dir = oil.get_current_dir()
+
+        if not dir then
+            dir = vim.fn.expand("%:p:h")
+        end
+
+        vim.fn.jobstart({"alacritty", "--working-directory", dir, }, { detach = true, })
     end)
 
     vim.keymap.set("n", "<leader>y", function()

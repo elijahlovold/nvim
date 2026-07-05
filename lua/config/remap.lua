@@ -1,10 +1,10 @@
 vim.g.mapleader = " "
 
 -- Map Alt + hjkl to navigate windows
-vim.api.nvim_set_keymap('n', '<A-h>', '<C-w>h', { noremap = true, silent = true })  -- Move left
-vim.api.nvim_set_keymap('n', '<A-j>', '<C-w>j', { noremap = true, silent = true })  -- Move down
-vim.api.nvim_set_keymap('n', '<A-k>', '<C-w>k', { noremap = true, silent = true })  -- Move up
-vim.api.nvim_set_keymap('n', '<A-l>', '<C-w>l', { noremap = true, silent = true })  -- Move right
+vim.keymap.set('n', '<A-h>', '<C-w>h', { noremap = true, silent = true })  -- Move left
+vim.keymap.set('n', '<A-j>', '<C-w>j', { noremap = true, silent = true })  -- Move down
+vim.keymap.set('n', '<A-k>', '<C-w>k', { noremap = true, silent = true })  -- Move up
+vim.keymap.set('n', '<A-l>', '<C-w>l', { noremap = true, silent = true })  -- Move right
 
 -- remaps when entering commands
 vim.cmd('cnoremap <A-j> <Down>')
@@ -34,7 +34,6 @@ vim.keymap.set("v", "<C-x>", [[:s/, /,\r/g<CR>]])
 -- vim.keymap.set("n", "<leader>Y", [["+Y]])
 
 vim.keymap.set("n", "Q", "<nop>")
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
 vim.keymap.set('n', '<leader>z', '1z=', { noremap = true, silent = true })
 
@@ -45,23 +44,45 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
-vim.api.nvim_set_keymap("i", "<C-.>", "<Tab>", { noremap = true, silent = true })
+vim.keymap.set("i", "<C-.>", "<Tab>", { noremap = true, silent = true })
 
 -- toggle controls
-vim.api.nvim_set_keymap('n', '<leader>tc', ':lua toggle_colorcolumn()<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>tc', function()
+  if vim.wo.colorcolumn == "" then
+    vim.wo.colorcolumn = "80"  -- Set to 80 if not set
+  else
+    vim.wo.colorcolumn = ""    -- Clear if it's set
+  end
+end, { noremap = true, silent = true })
 
 -- some quick common dirs
-vim.api.nvim_set_keymap('n', '<leader>/h', ':Oil ~/<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/r', ':Oil ~/repos<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/c', ':Oil ~/.config<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/n', ':Oil ~/.config/nvim/lua/elovold<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/N', ':Oil ~/.config/nvim/after/plugin<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/i', ':e ~/.config/i3/config<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>/b', ':e ~/Documents/bible_kjv.txt<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>/h', ':Oil ~/<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>/r', ':Oil ~/repos<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>/c', ':Oil ~/.config<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>/n', ':Oil ~/.config/nvim/lua/elovold<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>/N', ':Oil ~/.config/nvim/after/plugin<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>/i', ':e ~/.config/i3/config<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>/b', ':e ~/Documents/bible_kjv.txt<CR>', { noremap = true, silent = true })
 
 -- title case
 vim.keymap.set("v", "<leader>u", "<cmd>s/\\<./\\l&/g<CR><Esc>")
 vim.keymap.set("v", "<leader>U", "<cmd>s/\\<./\\u&/g<CR><Esc>")
+
+-- open in alacritty
+vim.keymap.set("n", "<leader>oa", function()
+  local dir = vim.fn.expand("%:p:h")
+  vim.fn.jobstart({ "alacritty", "--working-directory", dir })
+end, { silent = true })
+
+
+-- alternative browser opening
+vim.keymap.set("n", "<leader>gx", function()
+    local url = vim.fn.expand("<cfile>")
+    vim.fn.jobstart(
+        { "google-chrome", url },
+        { detach = true }
+    )
+end, { desc = "Open URL in Chrome" })
 
 -- search with firefox
 vim.keymap.set("v", "<leader>fx", function()
@@ -100,35 +121,34 @@ vim.keymap.set('n', '<leader>w', function()
   if wrap_enabled then
     -- If wrap is enabled, disable it and restore default behavior for j/k
     vim.wo.wrap = false
-    vim.api.nvim_del_keymap('n', 'j')  -- Remove gj remap
-    vim.api.nvim_del_keymap('v', 'j')  -- Remove gj remap
+    vim.keymap.del('n', 'j')  -- Remove gj remap
+    vim.keymap.del('v', 'j')  -- Remove gj remap
 
-    vim.api.nvim_del_keymap('n', 'k')  -- Remove gk remap
-    vim.api.nvim_del_keymap('v', 'k')  -- Remove gk remap
+    vim.keymap.del('n', 'k')  -- Remove gk remap
+    vim.keymap.del('v', 'k')  -- Remove gk remap
 
-    vim.api.nvim_del_keymap('n', '0')
-    vim.api.nvim_del_keymap('v', '0')
+    vim.keymap.del('n', '0')
+    vim.keymap.del('v', '0')
 
-    vim.api.nvim_del_keymap('n', '$')
-    vim.api.nvim_del_keymap('v', '$')
+    vim.keymap.del('n', '$')
+    vim.keymap.del('v', '$')
   else
     -- If wrap is disabled, enable wrap and remap j/k to gj/gk
     vim.wo.wrap = true
-    vim.api.nvim_set_keymap('n', 'j', 'gj', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap('v', 'j', 'gj', { noremap = true, silent = true })
+    vim.keymap.set('n', 'j', 'gj', { noremap = true, silent = true })
+    vim.keymap.set('v', 'j', 'gj', { noremap = true, silent = true })
 
-    vim.api.nvim_set_keymap('n', 'k', 'gk', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap('v', 'k', 'gk', { noremap = true, silent = true })
+    vim.keymap.set('n', 'k', 'gk', { noremap = true, silent = true })
+    vim.keymap.set('v', 'k', 'gk', { noremap = true, silent = true })
 
-    vim.api.nvim_set_keymap('n', '0', 'g0', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap('v', '0', 'g0', { noremap = true, silent = true })
+    vim.keymap.set('n', '0', 'g0', { noremap = true, silent = true })
+    vim.keymap.set('v', '0', 'g0', { noremap = true, silent = true })
 
-    vim.api.nvim_set_keymap('n', '$', 'g$', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap('v', '$', 'g$', { noremap = true, silent = true })
+    vim.keymap.set('n', '$', 'g$', { noremap = true, silent = true })
+    vim.keymap.set('v', '$', 'g$', { noremap = true, silent = true })
   end
 end)
 
--- vim.api.nvim_set_keymap('n', '<leader>pl', '<CR>:!pdflatex %<CR>', { noremap = true, silent = true })
 function CompileLaTeX()
   -- Check if the current file is a .tex file
   local filetype = vim.fn.expand('%:e')
@@ -143,7 +163,7 @@ function CompileLaTeX()
 end
 
 -- Map the function to a keybinding (e.g., <leader>p)
-vim.api.nvim_set_keymap('n', '<leader>pl', ':lua CompileLaTeX()<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>pl', ':lua CompileLaTeX()<CR>', { noremap = true, silent = true })
 
 vim.keymap.set("v", "<leader>et", function()
     print("timed")
@@ -169,3 +189,44 @@ vim.keymap.set("v", "<leader>et", function()
     vim.api.nvim_buf_set_text(buf, sr, 0, sr, 0, before)
 end)
 
+local function files_in_buffer_dir()
+  local dir = vim.fn.expand("%:p:h")
+  local files = vim.fn.glob(dir .. "/*", false, true)
+
+  files = vim.tbl_filter(function(f)
+    return vim.fn.isdirectory(f) == 0
+  end, files)
+
+  table.sort(files)
+
+  for i, f in ipairs(files) do
+    files[i] = vim.fn.resolve(f)
+  end
+
+  return files
+end
+
+local function next_file(delta)
+  local files = files_in_buffer_dir()
+  local current = vim.fn.resolve(vim.fn.expand("%:p"))
+
+  for i, f in ipairs(files) do
+    if f == current then
+      local next_i = i + delta
+
+      if next_i >= 1 and next_i <= #files then
+        vim.cmd("edit " .. vim.fn.fnameescape(files[next_i]))
+      end
+
+      return
+    end
+  end
+end
+
+vim.keymap.set("n", "<M-ScrollWheelUp>", function()
+  next_file(-1)
+end)
+
+vim.keymap.set("n", "<M-ScrollWheelDown>", function()
+  next_file(1)
+end)
