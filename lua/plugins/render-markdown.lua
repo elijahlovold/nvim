@@ -3,12 +3,10 @@ return {
     dependencies = {
         "nvim-treesitter/nvim-treesitter",
         "nvim-mini/mini.nvim",
-        "3rd/image.nvim",
-    },
-    opts = {},
-    config = function()
-        if vim.env.KITTY_WINDOW_ID ~= nil then
-            require("image").setup({
+        {
+            "3rd/image.nvim",
+            enabled = vim.env.KITTY_WINDOW_ID ~= nil,
+            opts = {
                 backend = "kitty",
                 integrations = {
                     markdown = {
@@ -25,9 +23,11 @@ return {
                 max_width_window_percentage = math.huge,
                 max_height_window_percentage = 50,
                 kitty_method = "normal",
-            })
-        end
-
+            },
+        },
+    },
+    opts = {},
+    config = function()
         require("render-markdown").setup({
             bullet = {
                 icons = { '', '', '◆', '◇' },
