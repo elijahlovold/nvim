@@ -20,19 +20,10 @@ local function get_tags()
     local lines = vim.fn.readfile(file)
 
     local tags = {}
-    local in_section = false
-
     for _, line in ipairs(lines) do
-        -- read until we find the # Tags section
-        if not in_section then
-            if line:match("^# Tags") then
-                in_section = true
-            end
-        else
-            if line:match("^%- ") then
-                local tag = line:gsub("^%- ", "")
-                table.insert(tags, tag)
-            end
+        if line:match("^%- ") then
+            local tag = line:gsub("^%- ", "")
+            table.insert(tags, tag)
         end
     end
 
