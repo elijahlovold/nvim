@@ -26,6 +26,11 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("n", "*", "*zz")
 vim.keymap.set("n", "#", "#zz")
 
+-- custom matching groups
+vim.keymap.set({ "x", "o" }, "i*", function() vim.cmd([[normal! T*vt*]]) end)
+vim.keymap.set({ "x", "o" }, "a*", function() vim.cmd([[normal! F*vf*]]) end)
+--
+
 vim.keymap.set("n", "<leader>P", [[viwP]])
 vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
 
@@ -59,10 +64,6 @@ end, { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>/h', ':Oil ~/<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>/r', ':Oil ~/repos<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>/c', ':Oil ~/.config<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>/n', ':Oil ~/.config/nvim/lua/elovold<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>/N', ':Oil ~/.config/nvim/after/plugin<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>/i', ':e ~/.config/i3/config<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>/b', ':e ~/Documents/bible_kjv.txt<CR>', { noremap = true, silent = true })
 
 -- title case
 vim.keymap.set("v", "<leader>u", "<cmd>s/\\<./\\l&/g<CR><Esc>")

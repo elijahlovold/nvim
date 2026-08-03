@@ -192,13 +192,20 @@ return {
             path = vim.split(package.path, ";"),
           },
           workspace = {
-            library = vim.api.nvim_get_runtime_file("", true),
+            library = {
+                vim.api.nvim_get_runtime_file("", true),
+                "/usr/share/hypr/stubs",
+            }
           },
           completion = {
             callSnippet = "Replace",
           },
         },
       },
+    })
+
+    vim.lsp.config("qmlls", {
+        cmd = { "qmlls6" },
     })
 
     -- Enable them
@@ -211,6 +218,7 @@ return {
       "html",
       "svlangserver",
       "markdown_oxide",
+      "qmlls",
     })
   end
 }
