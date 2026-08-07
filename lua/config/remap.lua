@@ -150,22 +150,6 @@ vim.keymap.set('n', '<leader>w', function()
   end
 end)
 
-function CompileLaTeX()
-  -- Check if the current file is a .tex file
-  local filetype = vim.fn.expand('%:e')
-  if filetype == 'tex' then
-    -- Save the current file
-    vim.cmd('write')
-    -- Run pdflatex and suppress output
-    vim.cmd('silent !pdflatex % > /dev/null 2>&1')
-  else
-    print("Not a LaTeX file!")
-  end
-end
-
--- Map the function to a keybinding (e.g., <leader>p)
-vim.keymap.set('n', '<leader>pl', ':lua CompileLaTeX()<CR>', { noremap = true, silent = true })
-
 vim.keymap.set("v", "<leader>et", function()
     print("timed")
     local buf = 0

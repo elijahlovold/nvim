@@ -69,7 +69,8 @@ return {
       vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
       vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts) -- dep
       vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, opts) -- dep
-      vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts) -- dep
+      -- using telescope now for reference
+      -- vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts) -- dep
       vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, opts)
       vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
       vim.keymap.set('n', ']d', function() vim.diagnostic.jump({ count = 1 })  end, opts)

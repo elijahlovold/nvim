@@ -1,132 +1,218 @@
 return {
   'nvim-telescope/telescope.nvim',
-  dependencies = { 'nvim-lua/plenary.nvim' },
-  config = function()
-    local builtin = require('telescope.builtin')
-    vim.keymap.set('n', '<leader>pg', builtin.git_files, {})
 
-    local function find_files()
-      builtin.find_files({
-        file_ignore_patterns = {
-          "%.rst$",
-          "%.png$",
-          "%.jpeg$",
-          "%.raw$",
+  dependencies = {
+    'nvim-lua/plenary.nvim',
+    {
+      "nvim-telescope/telescope-fzf-native.nvim",
+      build = "make",
+      cond = vim.fn.executable("make") == 1,
+    },
+  },
+
+  config = function()
+    local telescope = require('telescope')
+    local builtin = require('telescope.builtin')
+    local actions = require('telescope.actions')
+
+    local rg_args = { "rg",
+      "--color=never", "--no-heading", "--with-filename",
+      "--line-number", "--column", "--smart-case",
+    }
+
+    local rga_args = { "rga",
+      "--color=never", "--no-heading", "--with-filename",
+      "--line-number", "--column", "--smart-case",
+    }
+
+    -- ~-~-~-~-~-~-~-~-~-~ setup ~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+
+    telescope.setup({
+      defaults = {
+        vimgrep_arguments = rg_args,
+
+        mappings = {
+          i = {
+            ["<A-j>"] = actions.move_selection_next,
+            ["<A-k>"] = actions.move_selection_previous,
+
+            ["<C-q>"] = actions.smart_send_to_qflist
+            + actions.open_qflist,
+
+            ["<C-j>"] = actions.preview_scrolling_down,
+            ["<C-k>"] = actions.preview_scrolling_up,
+          },
+
+          n = {
+            ["j"] = actions.move_selection_next,
+            ["k"] = actions.move_selection_previous,
+
+            ["q"] = actions.close,
+
+            ["<C-q>"] = actions.smart_send_to_qflist
+            + actions.open_qflist,
+          },
         },
-        -- no_ignore = true,
-        attach_mappings = function(prompt_bufnr, map)
-          map('i', '<A-j>', require('telescope.actions').move_selection_next)
-          map('i', '<A-k>', require('telescope.actions').move_selection_previous)
-          return true
+      },
+
+      pickers = {
+        find_files = {
+          hidden = true,
+
+          file_ignore_patterns = {
+            "%.rst$",
+            "%.png$",
+            "%.jpe?g$",
+            "%.raw$",
+          },
+        },
+
+        buffers = {
+          sort_mru = true,
+          ignore_current_buffer = true,
+
+          mappings = {
+            i = {
+              ["<C-d>"] = actions.delete_buffer,
+            },
+            n = {
+              ["dd"] = actions.delete_buffer,
+            },
+          },
+        },
+
+        current_buffer_fuzzy_find = {
+          previewer = false,
+        },
+      },
+
+      extensions = {
+        fzf = {
+          fuzzy = true,
+          override_generic_sorter = true,
+          override_file_sorter = true,
+          case_mode = "smart_case",
+        },
+      },
+    })
+
+    -- ~-~-~-~-~-~-~-~-~-~ functions ~-~-~-~-~-~-~-~-~-~-~-~-~-
+
+    pcall(telescope.load_extension, "fzf")
+
+    local function grep_no_ignore()
+        local args = vim.deepcopy(rg_args)
+        vim.list_extend(args, { "--no-ignore" })
+        builtin.live_grep({
+          prompt_title = "Live Grep --no-ignore",
+          vimgrep_arguments = args,
+        })
+    end
+
+    local function grep_extensions()
+      vim.ui.input({
+        prompt = "Extensions: ",
+      }, function(input)
+        if not input or input == "" then
+          return
         end
+
+        local args = vim.deepcopy(rg_args)
+
+        for extension in input:gmatch("[^,]+") do
+          extension = vim.trim(extension)
+
+          if extension ~= "" then
+            extension = extension:gsub("^%*?%.?", "")
+            vim.list_extend(args, {
+              "--glob",
+              "*." .. extension,
+            })
+          end
+        end
+
+        builtin.live_grep({
+          prompt_title = "Grep by extension",
+          vimgrep_arguments = args,
+        })
+      end)
+    end
+
+    local function grep_documents()
+      builtin.live_grep({
+        prompt_title = "Search documents with rga",
+        vimgrep_arguments = rga_args,
       })
     end
 
-    vim.keymap.set('n', '<C-k>', find_files)
-    vim.keymap.set('n', '<leader>pf', find_files)
-
-    -- Function to prompt for file type and perform a live_grep search in the specified file type
-    vim.keymap.set('n', '<leader>pd', function()
-      -- Prompt for file type (e.g., .cpp, .hpp)
-      vim.ui.input({ prompt = 'Enter file type (e.g., .cpp, .hpp): ' }, function(filetype)
-        if filetype then
-          local glob_args = {}
-          for ftype in string.gmatch(filetype, '([^,]+)') do
-            ftype = ftype:gsub("^%s+", "")  -- Remove leading whitespace
-
-            if not ftype:match('^%*') then
-              ftype = '*' .. ftype  -- Add '*' only if not present
-            end
-            table.insert(glob_args, '--glob')
-            table.insert(glob_args, ftype)
-          end
-
-          -- Call Telescope live_grep with custom vimgrep_arguments including the file type filter
-          builtin.live_grep({
-            vimgrep_arguments = {
-              'rga',
-              '--color=never',
-              '--no-heading',
-              '--with-filename',
-              '--line-number',
-              '--column',
-              '--smart-case',
-              unpack(glob_args),
-            },
-            -- no_ignore = true,
-            attach_mappings = function(prompt_bufnr, map)
-              map('i', '<A-j>', require('telescope.actions').move_selection_next)
-              map('i', '<A-k>', require('telescope.actions').move_selection_previous)
-
-              return true
-            end
-          })
-        end
-      end)
-    end)
-
-    vim.keymap.set("n", "<leader>pu",
-        require("telescope.builtin").current_buffer_fuzzy_find,
-        { desc = "Fuzzy search in buffer" }
-    )
-
-    vim.keymap.set('n', '<leader>ps', function()
-      builtin.live_grep({
-        vimgrep_arguments = {
-          'rga',
-          '--color=never',
-          '--no-heading',
-          '--with-filename',
-          '--line-number',
-          '--column',
-          '--smart-case',
-          -- '--no-ignore'       -- Disable .gitignore and other ignore files
-        },
-        -- no_ignore = true,
-        attach_mappings = function(prompt_bufnr, map)
-          map('i', '<A-j>', require('telescope.actions').move_selection_next)
-          map('i', '<A-k>', require('telescope.actions').move_selection_previous)
-
-          return true
-        end
-      })
-    end)
-
-    vim.keymap.set('n', '<leader>pa', function()
+    local function grep_word()
       builtin.grep_string({
-        search = vim.fn.expand('<cword>'),  -- Get the word under the cursor
-        no_ignore = true,
-        attach_mappings = function(prompt_bufnr, map)
-          map('i', '<A-j>', require('telescope.actions').move_selection_next)
-          map('i', '<A-k>', require('telescope.actions').move_selection_previous)
-
-          return true
-        end
+        search = vim.fn.expand("<cword>"),
       })
-    end)
+    end
 
-    vim.keymap.set('n', '<leader>pb', function()
-      builtin.buffers({
-        no_ignore = true,
-        attach_mappings = function(prompt_bufnr, map)
-          map('i', '<A-j>', require('telescope.actions').move_selection_next)
-          map('i', '<A-k>', require('telescope.actions').move_selection_previous)
+    local function grep_visual()
+      local previous_register = vim.fn.getreg('"')
+      local previous_register_type = vim.fn.getregtype('"')
 
-          return true
-        end
+      vim.cmd('normal! ""y')
+
+      local selection = vim.fn.getreg('"')
+      vim.fn.setreg('"', previous_register, previous_register_type)
+
+      builtin.grep_string({
+        search = selection,
       })
-    end)
+    end
 
-    vim.keymap.set('n', '<leader>ph', function()
-      builtin.help_tags({
-        no_ignore = true,
-        attach_mappings = function(prompt_bufnr, map)
-          map('i', '<A-j>', require('telescope.actions').move_selection_next)
-          map('i', '<A-k>', require('telescope.actions').move_selection_previous)
+   local function map(lhs, rhs, description, modes)
+      vim.keymap.set(
+        modes or "n",
+        lhs,
+        rhs,
+        { desc = "Telescope: " .. description }
+      )
+    end
 
-          return true
-        end
-      })
-    end)
-  end
+    -- ~-~-~-~-~-~-~-~-~-~ mappings -~-~-~-~-~-~-~-~-~-~-~-~-~-
+
+    map("<C-k>", builtin.find_files, "files")
+    map("<leader>pf", builtin.find_files, "files")
+    map("<leader>pg", builtin.git_files, "Git files")
+
+    map("<leader>ps", builtin.live_grep, "live grep")
+    map("<leader>pS", grep_no_ignore, "live grep, no ignores")
+    map("<leader>pd", grep_extensions, "grep extensions")
+    map("<leader>pD", grep_documents, "grep documents")
+    map("<leader>pa", grep_word, "grep cursor word")
+    map("<leader>pa", grep_visual, "grep selection", "x")
+
+    map("<leader>pu", builtin.current_buffer_fuzzy_find, "current buffer")
+    map("<leader>pb", builtin.buffers, "buffers")
+    map("<leader>ph", builtin.help_tags, "help tags")
+
+    map("<leader>pk", builtin.keymaps, "keymaps")
+    map("<leader>pc", builtin.commands, "commands")
+    map("<leader>pr", builtin.oldfiles, "recent files")
+    map("<leader>pj", builtin.jumplist, "jump list")
+    map("<leader>pl", builtin.resume, "resume last picker")
+    map("<leader>pp", builtin.builtin, "available pickers")
+
+    map("<leader>pe", builtin.diagnostics, "diagnostics")
+    map("<leader>pq", builtin.quickfix, "quickfix list")
+
+    map("<leader>pG", builtin.git_status, "Git status")
+    map("<leader>pC", builtin.git_commits, "Git commits")
+    map("<leader>pB", builtin.git_branches, "Git branches")
+
+    map("<leader>pm", builtin.marks, "marks")
+    map("<leader>p/", builtin.search_history, "search history")
+    map("<leader>p:", builtin.command_history, "command history")
+
+    map("grr", builtin.lsp_references, "LSP references")
+    map("<leader>py", builtin.lsp_document_symbols, "document symbols")
+    map("<leader>pY", builtin.lsp_dynamic_workspace_symbols, "workspace symbols")
+    map("<leader>pi", builtin.lsp_implementations, "implementations")
+    map("<leader>pt", builtin.lsp_type_definitions, "type definitions")
+  end,
 }
