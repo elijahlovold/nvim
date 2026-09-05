@@ -48,6 +48,7 @@ return {
     vim.api.nvim_create_autocmd('LspAttach', {
     callback = function(ev)
       local opts = { buffer = ev.buf }
+      local client = vim.lsp.get_client_by_id(ev.data.client_id)
 
       vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
       vim.keymap.set('n', '<leader>k', function()
@@ -66,6 +67,9 @@ return {
       end, opts)
       vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+      if client and client.name == "markdown_oxide" then
+        vim.keymap.set('n', 'gd', require('config.vault-helpers').goto_definition_or_create, opts)
+      end
       vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
       vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts) -- dep
       vim.keymap.set('n', 'go', vim.lsp.buf.type_definition, opts) -- dep
@@ -217,7 +221,7 @@ return {
       "rust_analyzer",
       "lua_ls",
       "html",
-      "svlangserver",
+      -- "svlangserver",
       "markdown_oxide",
       "qmlls",
     })
