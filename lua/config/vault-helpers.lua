@@ -217,4 +217,22 @@ function M.goto_definition_or_create()
     end)
 end
 
+-- own our 'gd' override end-to-end: detect markdown_oxide attaching and
+-- rebind gd ourselves, deferred via vim.schedule so we always win the race
+-- against any other LspAttach handler (e.g. a generic one in lsp.lua) that
+-- sets 'gd' for every filetype, regardless of autocmd registration order.
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(ev)
+        local client = vim.lsp.get_client_by_id(ev.data.client_id)
+        if not client or client.name ~= "markdown_oxide" then return end
+
+        vim.schedule(function()
+            vim.keymap.set('n', 'gd', M.goto_definition_or_create, {
+                buffer = ev.buf,
+                desc = "Go to definition, or create the note if missing",
+            })
+        end)
+    end,
+})
+
 return M
