@@ -9,13 +9,6 @@ return {
         "icon",
         -- {"mtime", highlight="OilMtime", },
       },
-        -- EXPERIMENTAL support for performing file operations with git
-        -- Return true to automatically git add/mv/rm files
-      git = {
-        -- add = function(path) return true end,
-        mv = function(src_path, dest_path) return true end,
-        -- rm = function(path) return true end,
-      },
 
       -- Correct structure
       view_options = {

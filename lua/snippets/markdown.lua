@@ -37,4 +37,12 @@ ls.add_snippets("markdown", {
       ""
     }),
   }),
+
+  s("ev", {
+    t("> "),
+    i(1, "event"),
+    t({ "", "> *" }),
+    i(2, "date"),
+    t("*"),
+  })
 })

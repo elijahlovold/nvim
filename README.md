@@ -14,3 +14,4 @@ fc-cache -f -v
 ```
 
 Lsps are installed via package manager now.
+Also, install `tree-sitter-cli`
