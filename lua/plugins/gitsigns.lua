@@ -75,26 +75,28 @@ return {
       return root or ""
     end
 
-    local function is_submodule(path)
-      local stat = vim.loop.fs_stat(path)
-      return stat and stat.type == "directory"
-    end
-
-    -- Get list of changed files via Git (porcelain output)
-    local function get_changed_files(path)
-      local cmd = "git -C \"" .. path .. "\" status --porcelain"
-      local output = vim.fn.systemlist(cmd)
+    -- Changed files under the repo at `root`, relative to it. -uall lists
+    -- untracked files one by one instead of collapsing them to "dir/"
+    -- (recursing into those re-ran the same status forever), and -z keeps
+    -- paths unquoted. Only real repos (a .git inside) are recursed into.
+    local function get_changed_files(root)
+      local out = vim.system({ "git", "-C", root, "status", "--porcelain", "-z", "-uall" }):wait().stdout or ""
+      local entries = vim.split(out, "\0", { plain = true, trimempty = true })
       local files = {}
 
-      -- strip heading of porcelain output and insert into table
-      for _, line in ipairs(output) do
-        local filename = line:sub(4)
-        if is_submodule(filename) then
-          local sub_files = get_changed_files(filename)
-          for _, v in ipairs(sub_files) do
+      local i = 1
+      while i <= #entries do
+        local status, filename = entries[i]:sub(1, 2), entries[i]:sub(4)
+        -- renames/copies are followed by the old path; skip it
+        if status:find("[RC]") then i = i + 1 end
+        i = i + 1
+
+        local abs = root .. "/" .. filename
+        if vim.uv.fs_stat(abs .. "/.git") then
+          for _, v in ipairs(get_changed_files(abs)) do
             table.insert(files, filename .. "/" .. v)
           end
-        else
+        elseif vim.uv.fs_stat(abs) then -- deleted files have nothing to open
           table.insert(files, filename)
         end
       end
@@ -104,10 +106,15 @@ return {
 
     -- Jump to next/previous changed file
     local function jump_to_changed_file(next)
-      local files = get_changed_files("")
+      local git_root = get_git_root()
+      if git_root == "" then return end
+      local files = get_changed_files(git_root)
       if #files == 0 then return end
 
-      local current = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":.")
+      -- match against root-relative paths, resolving symlinks on both sides
+      local buf = vim.uv.fs_realpath(vim.api.nvim_buf_get_name(0)) or ""
+      local real_root = vim.uv.fs_realpath(git_root) or git_root
+      local current = buf:sub(#real_root + 2)
       local index = index_of(files, current)
 
       local next_index
@@ -122,11 +129,7 @@ return {
       end
 
       vim.notify("(" .. next_index .. " of " .. #files .. "): " .. files[next_index])
-
-      -- translate to git root
-      local git_root = get_git_root()
-      local abs_file = vim.fn.fnamemodify(git_root .. "/" .. files[next_index], ":p")
-      vim.cmd("edit " .. abs_file)
+      vim.cmd.edit(vim.fn.fnameescape(git_root .. "/" .. files[next_index]))
     end
 
     -- Bind gj to next changed file, gk to previous
